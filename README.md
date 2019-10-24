@@ -27,8 +27,13 @@ The required dependencies for *deepFRIer* are [Keras](https://keras.io/), [Tenso
 # Training DeepFRI
 To train *deepFRI* run the following command from the project directory:
 ```
-python train_DeepFRI.py --model_name model_name
+python train_DeepFRI.py --model_name model_name_prefix
 ```
+
+## Output
+Generated files: 
+* `model_name_prefix_model.h5`   trained model with architecture and weights saved in HDF5 format 
+* `model_name_prefix_pred_scores.pckl` pickle file with predicted GO term/EC number scores for test proteins
 
 # Flags
 
@@ -46,7 +51,8 @@ A number of FLAGS is available to specify the behavior of *deepFRI*, both for pr
 * `ont`             str, GO or EC ontology. Default: `molecular function`
 * `cmap_type`       str, type of contact maps (A_nbr, A_ca or A_all). Default: `A_ca`
 * `lm_model_name`   str, keras pre-trained LSTM Language Model name. Default: `lstm_lm.h5`
-* `split_fn`        str, pickle file with train/test/valid PDB IDs and their annotatin matrix. Default: `test_split_seqsim_30.pckl`
+* `split_fn`        str, pickle file with train/test/valid PDB IDs and their annotatin matrix. 
+		    Default: `train_test_split_seqsim_30.pckl`
 * `catalogue`       str, csv file mapping PDB IDs to numpy files storing individual contact maps. Default: `catalogue.csv`
 * `train_tfrecord_fn`	str, train tfrecords file name. Default: `train.tfrecords`
 * `valid_tfrecord_fn`	str, validaiton tfrecords file name. Default: `valid.tfrecords`
@@ -58,5 +64,4 @@ Data (*train_tfrecord*, *valid_tfrecord* files) used for producing figures in th
 https://users.flatironinstitute.org/vgligorijevic/public_www/deepFRIer
 
 
-## Output
 
