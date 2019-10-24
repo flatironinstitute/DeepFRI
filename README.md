@@ -39,8 +39,8 @@ python train_DeepFRI.py --model_name model_name
 
 A number of FLAGS is available to specify the behavior of *deepFRI*, both for prediction and training:
 
-* `gcn_dims`        list (int), dimensions of GCN layers
-* `hidden_dims`	    list (int), dimensions of Dense layers
-* `dropout`	    float, dropout rate for Dense layer
-* `l2_reg` 	    float, l2 regularization coefficient for GCN layers
+* `gcn_dims`        list (int), dimensions of GCN layers. Default: `[128, 256, 512]`
+* `hidden_dims`	    list (int), dimensions of Dense layers. Default: `[512]`
+* `dropout`	    float, dropout rate for Dense layer. Default: `0.30`
+* `l2_reg` 	    float, l2 regularization coefficient for GCN layers. Default: `1e-4`
 * `epochs`          int, number of epochs to train the model. Default: `100`
