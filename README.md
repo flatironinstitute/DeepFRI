@@ -35,7 +35,7 @@ To train *deepFRI* run the following command from the project directory:
 python train_DeepFRI.py --model_name model_name
 ```
 
-# FLAGS
+# Flags
 
 A number of FLAGS is available to specify the behavior of *deepFRI*, both for prediction and training:
 
