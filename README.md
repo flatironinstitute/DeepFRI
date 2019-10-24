@@ -4,8 +4,8 @@ Deep functional residue identification
 # Citing
 ```
 @article {Gligorijevic2019,
-	author = {Gligorijevic, Vladimir and Renfrew, P. Douglas and Kosciolek, Tomasz
-	and Leman, Julia Koehler and Cho, Kyunghyun and Vatanen, Tommi and Berenberg, Daniel
+	author = {Gligorijevic, Vladimir and Renfrew, P. Douglas and Kosciolek, Tomasz and Leman,
+	Julia Koehler and Cho, Kyunghyun and Vatanen, Tommi and Berenberg, Daniel
 	and Taylor, Bryn and Fisk, Ian M. and Xavier, Ramnik J. and Knight, Rob and Bonneau, Richard},
 	title = {Structure-Based Function Prediction using Graph Convolutional Networks},
 	year = {2019},
