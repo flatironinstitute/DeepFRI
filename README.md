@@ -1,5 +1,6 @@
 # DeepFRIer
 Deep functional residue identification
+<img src="figs/pipeline.png" height="350">
 
 # Citing
 ```
