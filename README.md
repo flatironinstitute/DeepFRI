@@ -23,13 +23,8 @@ Deep functional residue identification
 
 The required dependencies for *deepFRIer* are [Keras](https://keras.io/), [TensorFlow](https://www.tensorflow.org/), [Numpy](http://www.numpy.org/) and [scikit-learn](http://scikit-learn.org/).
 
-## Data
 
-Data (*tfrecord* train/validation files) used for producing figures in the paper can be downloaded from:
-
-https://users.flatironinstitute.org/vgligorijevic/public_www/deepFRIer
-
-## Training DeepFRI
+# Training DeepFRI
 To train *deepFRI* run the following command from the project directory:
 ```
 python train_DeepFRI.py --model_name model_name
@@ -55,3 +50,11 @@ A number of FLAGS is available to specify the behavior of *deepFRI*, both for pr
 * `catalogue`       str, csv file mapping PDB IDs to numpy files storing individual contact maps. Default: `catalogue.csv`
 * `train_tfrecord_fn`	str, train tfrecords file name. Default: `train.tfrecords`
 * `valid_tfrecord_fn`	str, validaiton tfrecords file name. Default: `valid.tfrecords`
+
+## Data
+
+Data (*tfrecord* train/validation files) used for producing figures in the paper can be downloaded from:
+
+https://users.flatironinstitute.org/vgligorijevic/public_www/deepFRIer
+
+
