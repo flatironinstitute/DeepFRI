@@ -63,5 +63,10 @@ Data (*train_tfrecord*, *valid_tfrecord* files) used for producing figures in th
 
 https://users.flatironinstitute.org/vgligorijevic/public_www/deepFRIer
 
+# Functional residue identification
+<img src="figs/saliency.png">
+
+
+
 
 
