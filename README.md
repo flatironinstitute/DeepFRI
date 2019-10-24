@@ -44,17 +44,19 @@ A number of FLAGS is available to specify the behavior of *deepFRI*, both for pr
 * `pad_len`         int, maximum padding length for sequences and contact maps. Default: `1000`
 * `results_dir`     str, directory with exported models and results. Default: `./results/`
 * `ont`             str, GO or EC ontology. Default: `molecular function`
-* `cmap_type`       str, yype of contact maps (A_nbr, A_ca or A_all). Default: `A_ca`
+* `cmap_type`       str, type of contact maps (A_nbr, A_ca or A_all). Default: `A_ca`
 * `lm_model_name`   str, keras pre-trained LSTM Language Model name. Default: `lstm_lm.h5`
-* `split_fn`        str, pickle file with train/test/valid PDB IDs. Default: `pdb_GO_train_test_split_bc_30.pckl`
+* `split_fn`        str, pickle file with train/test/valid PDB IDs and their annotatin matrix. Default: `test_split_seqsim_30.pckl`
 * `catalogue`       str, csv file mapping PDB IDs to numpy files storing individual contact maps. Default: `catalogue.csv`
 * `train_tfrecord_fn`	str, train tfrecords file name. Default: `train.tfrecords`
 * `valid_tfrecord_fn`	str, validaiton tfrecords file name. Default: `valid.tfrecords`
 
 ## Data
 
-Data (*tfrecord* train/validation files) used for producing figures in the paper can be downloaded from:
+Data (*train_tfrecord*, *valid_tfrecord* files) used for producing figures in the paper can be downloaded from:
 
 https://users.flatironinstitute.org/vgligorijevic/public_www/deepFRIer
 
+
+## Output
 
