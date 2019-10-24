@@ -17,3 +17,14 @@ Deep functional residue identification
 }
 
 ```
+## Dependencies
+
+*DeepFRIer* is tested to work under Python 3.6.
+
+The required dependencies for *deepNF* are [Keras](https://keras.io/), [TensorFlow](https://www.tensorflow.org/), [Numpy](http://www.numpy.org/) and [scikit-learn](http://scikit-learn.org/).
+
+## Data
+
+Data (*tfrecord* train/validation files) used for producing figures in the paper can be downloaded from:
+
+https://users.flatironinstitute.org/vgligorijevic/public_www/deepFRIer
