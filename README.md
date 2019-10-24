@@ -39,4 +39,4 @@ python train_DeepFRI.py --model_name model_name
 
 A number of FLAGS is available to specify the behavior of *deepFRI*, both for prediction and training:
 
-* `gcn_dims`        `list <int>, dimensions of GCN layers
+* `gcn_dims`        list <int>, dimensions of GCN layers
