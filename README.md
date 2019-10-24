@@ -39,8 +39,19 @@ python train_DeepFRI.py --model_name model_name
 
 A number of FLAGS is available to specify the behavior of *deepFRI*, both for prediction and training:
 
+* `model_name`      str, name of the model. Default: `GCN-LM_model`
 * `gcn_dims`        list (int), dimensions of GCN layers. Default: `[128, 256, 512]`
 * `hidden_dims`	    list (int), dimensions of Dense layers. Default: `[512]`
 * `dropout`	    float, dropout rate for Dense layer. Default: `0.30`
 * `l2_reg` 	    float, l2 regularization coefficient for GCN layers. Default: `1e-4`
 * `epochs`          int, number of epochs to train the model. Default: `100`
+* `batch_size`	    int, Batch size. Default: `64`
+* `pad_len`         int, maximum padding length for sequences and contact maps. Default: `1000`
+* `results_dir`     str, directory with exported models and results. Default: `./results/`
+* `ont`             str, GO or EC ontology. Default: `molecular function`
+* `cmap_type`       str, yype of contact maps (A_nbr, A_ca or A_all). Default: `A_ca`
+* `lm_model_name`   str, keras pre-trained LSTM Language Model name. Default: `lstm_lm.h5`
+* `split_fn`        str, pickle file with train/test/valid PDB IDs. Default: `pdb_GO_train_test_split_bc_30.pckl`
+* `catalogue`       str, csv file mapping PDB IDs to numpy files storing individual contact maps. Default: `catalogue.csv`
+* `train_tfrecord_fn`	str, train tfrecords file name. Default: `train.tfrecords`
+* `valid_tfrecord_fn`	str, validaiton tfrecords file name. Default: `valid.tfrecords`
