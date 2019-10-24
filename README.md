@@ -28,3 +28,15 @@ The required dependencies for *deepFRIer* are [Keras](https://keras.io/), [Tenso
 Data (*tfrecord* train/validation files) used for producing figures in the paper can be downloaded from:
 
 https://users.flatironinstitute.org/vgligorijevic/public_www/deepFRIer
+
+## Training DeepFRI
+To train *deepFRI* run the following command from the project directory:
+```
+python train_DeepFRI.py --model_name model_name
+```
+
+# FLAGS
+
+A number of FLAGS is available to specify the behavior of *deepFRI*, both for prediction and training:
+
+* `gcn_dims`        `list <int>, dimensions of GCN layers
