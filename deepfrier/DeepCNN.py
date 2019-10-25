@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from utils import micro_aupr, get_batched_dataset, EvaluateInputTensor
+from .utils import micro_aupr, get_batched_dataset, EvaluateInputTensor
 
 from keras.models import Model, load_model
 from keras import regularizers

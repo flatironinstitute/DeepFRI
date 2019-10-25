@@ -3,7 +3,7 @@ import numpy as np
 import keras.backend as K
 
 from keras.models import load_model
-from utils import micro_aupr, load_catalogue, seq2onehot
+from .utils import micro_aupr, load_catalogue, seq2onehot
 from .GCN_layer import GraphCNN
 
 

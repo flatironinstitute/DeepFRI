@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from utils import micro_aupr, get_batched_dataset, EvaluateInputTensor
+from .utils import micro_aupr, get_batched_dataset, EvaluateInputTensor
 
 import keras.backend as K
 from keras.models import Model, load_model

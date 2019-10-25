@@ -31,8 +31,8 @@ python train_DeepFRI.py --model_name model_name_prefix
 ```
 
 ## Output
-Generated files: 
-* `model_name_prefix_model.h5`   trained model with architecture and weights saved in HDF5 format 
+Generated files:
+* `model_name_prefix_model.h5`   trained model with architecture and weights saved in HDF5 format
 * `model_name_prefix_pred_scores.pckl` pickle file with predicted GO term/EC number scores for test proteins
 
 # Flags
@@ -50,8 +50,8 @@ A number of FLAGS is available to specify the behavior of *deepFRI*, both for pr
 * `results_dir`     str, directory with exported models and results. Default: `./results/`
 * `ont`             str, GO or EC ontology. Default: `molecular function`
 * `cmap_type`       str, type of contact maps (A_nbr, A_ca or A_all). Default: `A_ca`
-* `lm_model_name`   str, keras pre-trained LSTM Language Model name. Default: `lstm_lm.h5`
-* `split_fn`        str, pickle file with train/test/valid PDB IDs and their annotatin matrix. 
+* `lm_model_name`   str, keras pre-trained LSTM Language Model name. Default: `./trained_models/lstm_lm.h5`
+* `split_fn`        str, pickle file with train/test/valid PDB IDs and their annotatin matrix.
 		    Default: `train_test_split_seqsim_30.pckl`
 * `catalogue`       str, csv file mapping PDB IDs to numpy files storing individual contact maps. Default: `catalogue.csv`
 * `train_tfrecord_fn`	str, train tfrecords file name. Default: `train.tfrecords`

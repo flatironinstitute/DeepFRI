@@ -6,10 +6,10 @@ import keras.backend as K
 # from keras.models import load_model
 # from keras_gcnn.layers import GraphCNN
 # from utils import micro_aupr,
-from utils import load_catalogue, rnd_adj
+from deepfrier.utils import load_catalogue, rnd_adj
 
-from deepfrier import DeepFRI
-from utils import get_thresholds, seq2onehot
+from deepfrier.DeepFRI import DeepFRI
+from utils.utils import get_thresholds, seq2onehot
 
 
 if __name__ == "__main__":

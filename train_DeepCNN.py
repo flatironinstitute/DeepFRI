@@ -8,8 +8,8 @@ import keras.backend as K
 # from utils import micro_aupr,
 from utils import load_catalogue
 
-from DeepCNN import DeepCNN
-from utils import get_thresholds, seq2onehot
+from deepfrier.DeepCNN import DeepCNN
+from deepfrier.utils import get_thresholds, seq2onehot
 
 
 if __name__ == "__main__":
@@ -98,32 +98,6 @@ if __name__ == "__main__":
     pickle.dump({'Y_test': Y_test, 'Y_hat_test': Y_hat_test, 'num_pos': num_pos, 'L_test': lengths,
                  'goterms': goterms, 'gonames': gonames}, open(args.results_dir + args.model_name + '_pred_scores.pckl', 'wb'))
 
-    # making predictions on PDB chains
-    if args.train_tfrecord_fn.find('swiss-model') >= 0:
-        annot = pickle.load(open('/mnt/home/vgligorijevic/Projects/NewMethods/Contact_maps/go_annot/pdb_GO_train_test_split_bc_30.pckl', 'rb'))
-        test_goterms = annot[args.ont]['goterms']
-        test_gonames = annot[args.ont]['gonames']
-        Y_test = annot[args.ont]['Y_test']
-        chains = annot[args.ont]['test_pdb_chains']
-
-        chain2path = load_catalogue(fn='/mnt/ceph/users/vgligorijevic/ContactMaps/data/nr_pdb_chains/catalogue.csv')
-        Y_hat_test = np.zeros((len(chains), len(goterms)), dtype=float)
-        for i, chain in enumerate(chains):
-            cmap = np.load(chain2path[chain])
-            S = seq2onehot(str(cmap['sequence']))
-            # ##
-            S = S.reshape(1, *S.shape)
-            Y_hat_test[i] = model.predict(S)
-
-        overlap_goterms = list(set(goterms).intersection(set(test_goterms)))
-        print ("### Making predictions for: ", len(goterms), "goterms.")
-
-        train_idx = [np.where(goterms == go)[0][0] for go in overlap_goterms]
-        test_idx = [np.where(test_goterms == go)[0][0] for go in overlap_goterms]
-
-        pickle.dump({'Y_test': Y_test[:, test_idx], 'Y_hat_test': Y_hat_test[:, train_idx], 'chain_ids': chains,
-                    'goterms': test_goterms[test_idx], 'gonames': test_gonames[test_idx]},
-                    open(args.results_dir + args.model_name + '_test_seqid_30_pred_scores.pckl', 'wb'))
     # save models
     model.plot_losses()
     model.save_model()
