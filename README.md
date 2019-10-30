@@ -25,7 +25,7 @@ The required dependencies for *deepFRIer* are [Keras](https://keras.io/), [Tenso
 
 
 # Protein function prediction
-To predict functions of a protein use **predict.py** script with the following FLAGS:
+To predict functions of a protein use `predict.py` script with the following FLAGS:
 
 * `seq`             str, Protein sequence as a string
 * `cmap`            str, Name of a file storing protein contact map and sequence in `*.npz` file format
