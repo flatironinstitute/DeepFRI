@@ -42,8 +42,7 @@ To predict functions of a protein use **predict.py** script with the following F
 
 Predicting MF-GO terms for Parvalbumin alpha (PDB: [1S3P](https://www.rcsb.org/structure/1S3P)):
 
-```python
-
+```
 >> python predict.py --cmap 1S3P-A.npz --verbose
 
 ```
@@ -70,7 +69,7 @@ query_prot GO:0032027 0.00001 myosin light chain binding
 # Training DeepFRI
 To train *deepFRI* run the following command from the project directory:
 ```
-python train_DeepFRI.py --model_name model_name_prefix
+>> python train_DeepFRI.py --model_name model_name_prefix
 ```
 
 ## Output
