@@ -2,7 +2,7 @@
 Deep functional residue identification
 <img src="figs/pipeline.png">
 
-# Citing
+## Citing
 ```
 @article {Gligorijevic2019,
 	author = {Gligorijevic, Vladimir and Renfrew, P. Douglas and Kosciolek, Tomasz and Leman,
