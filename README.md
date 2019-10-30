@@ -24,6 +24,49 @@ Deep functional residue identification
 The required dependencies for *deepFRIer* are [Keras](https://keras.io/), [TensorFlow](https://www.tensorflow.org/), [Numpy](http://www.numpy.org/) and [scikit-learn](http://scikit-learn.org/).
 
 
+# Protein function prediction
+To predict functions of a protein use **predict.py** script with the following FLAGS:
+
+* `seq`             str, Protein sequence as a string
+* `cmap`            str, Name of a file storing protein contact map and sequence in `*.npz` file format
+                    (with the following numpy array variables: `A_ca`, `sequence`, `L`)
+* `cmap_csv`        str, Filename of the catalogue (in `*.csv` file format) containg mapping between protein names and directory of `*.npz` filenames
+* `fasta_fn`        str, Fasta filename
+* `output_fn_prefix`str, Output filename for saving predictions and class
+                    activation maps.
+* `verbose`         bool, Whether or not to print function prediction results.
+* `saliency`        bool, Whether or not to compute class activaton maps.
+
+
+## Example:
+
+Predicting MF-GO terms for Parvalbumin alpha (PDB: [1S3P](https://www.rcsb.org/structure/1S3P)):
+
+```python
+
+>> python predict.py --cmap 1S3P-A.npz --verbose
+
+```
+
+Output:
+
+
+```txt
+Protein GO-term/EC-number Score GO-term/EC-number name
+query_prot GO:0043167 0.95134 ion binding
+query_prot GO:0046872 0.90832 metal ion binding
+query_prot GO:0043169 0.90517 cation binding
+query_prot GO:0005509 0.87179 calcium ion binding
+query_prot GO:0043168 0.06332 anion binding
+query_prot GO:0031072 0.00247 heat shock protein binding
+query_prot GO:1901567 0.00099 fatty acid derivative binding
+query_prot GO:0045159 0.00009 myosin II binding
+query_prot GO:0032027 0.00001 myosin light chain binding
+
+```
+
+
+
 # Training DeepFRI
 To train *deepFRI* run the following command from the project directory:
 ```
@@ -32,7 +75,7 @@ python train_DeepFRI.py --model_name model_name_prefix
 
 ## Output
 Generated files:
-* `model_name_prefix_model.h5`   trained model with architecture and weights saved in HDF5 format
+* `model_name_prefix_model.hdf5`   trained model with architecture and weights saved in HDF5 format
 * `model_name_prefix_pred_scores.pckl` pickle file with predicted GO term/EC number scores for test proteins
 
 # Flags
