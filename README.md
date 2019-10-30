@@ -22,6 +22,7 @@ Deep functional residue identification
 *DeepFRIer* is tested to work under Python 3.6.
 
 The required dependencies for *deepFRIer* are [Keras](https://keras.io/), [TensorFlow](https://www.tensorflow.org/), [Numpy](http://www.numpy.org/) and [scikit-learn](http://scikit-learn.org/).
+To install all dependencies run: `pip install -r dependencies.txt`
 
 
 # Protein function prediction
