@@ -26,7 +26,7 @@ To install all dependencies run: `pip install -r dependencies.txt`
 
 
 # Protein function prediction
-To predict functions of a protein use `predict.py` script with the following FLAGS:
+To predict functions of a protein use `predict.py` script with the following options:
 
 * `seq`             str, Protein sequence as a string
 * `cmap`            str, Name of a file storing protein contact map and sequence in `*.npz` file format
@@ -41,7 +41,7 @@ To predict functions of a protein use `predict.py` script with the following FLA
 
 ## Example:
 
-Predicting MF-GO terms for Parvalbumin alpha protein (PDB: [1S3P](https://www.rcsb.org/structure/1S3P)):
+Predicting MF-GO terms for Parvalbumin alpha protein using its sequence and contact map (PDB: [1S3P](https://www.rcsb.org/structure/1S3P)):
 
 ```
 >> python predict.py --cmap 1S3P-A.npz --verbose
@@ -63,6 +63,32 @@ query_prot GO:1901567 0.00099 fatty acid derivative binding
 query_prot GO:0045159 0.00009 myosin II binding
 query_prot GO:0032027 0.00001 myosin light chain binding
 
+```
+
+
+Predicting MF-GO terms for Parvalbumin alpha protein using its sequence (PDB: [1S3P](https://www.rcsb.org/structure/1S3P)):
+
+```
+>> python predict.py --cmap 'SMTDLLSAEDIKKAIGAFTAADSFDHKKFFQMVGLKKKSADDVKKVFHILDKDKDGFIDEDELGSILKGFSSDARDLSAKETKTLMAAGDKDGDGKIGVEEFSTLVAES' --verbose
+
+```
+
+## Output:
+
+
+```txt
+Protein GO-term/EC-number Score GO-term/EC-number name
+query_prot GO:0005509 0.99434 calcium ion binding
+query_prot GO:0046872 0.98379 metal ion binding
+query_prot GO:0043169 0.98373 cation binding
+query_prot GO:0043167 0.97652 ion binding
+query_prot GO:0017022 0.00591 myosin binding
+query_prot GO:0043236 0.00045 laminin binding
+query_prot GO:0045159 0.00015 myosin II binding
+query_prot GO:0019237 0.00003 centromeric DNA binding
+query_prot GO:0017151 0.00002 DEAD/H-box RNA helicase binding
+query_prot GO:0032027 0.00001 myosin light chain binding
+query_prot GO:0000171 0.00001 ribonuclease MRP activity
 ```
 
 
