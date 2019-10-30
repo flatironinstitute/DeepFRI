@@ -40,14 +40,14 @@ To predict functions of a protein use **predict.py** script with the following F
 
 ## Example:
 
-Predicting MF-GO terms for Parvalbumin alpha (PDB: [1S3P](https://www.rcsb.org/structure/1S3P)):
+Predicting MF-GO terms for Parvalbumin alpha protein (PDB: [1S3P](https://www.rcsb.org/structure/1S3P)):
 
 ```
 >> python predict.py --cmap 1S3P-A.npz --verbose
 
 ```
 
-Output:
+## Output:
 
 
 ```txt
