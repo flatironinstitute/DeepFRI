@@ -106,7 +106,7 @@ query_prot GO:0000171 0.00001 ribonuclease MRP activity
 
 ```
 
-## Option 4: predicting functions of proteins from contact maps catalogue
+## Option 4: predicting functions of proteins from contact map catalogue
 
 ```
 >> python predict.py --cmap_csv examples/catalogue_pdb_chains.csv -o DeeFRI_pdb_chain --saliency
@@ -168,7 +168,7 @@ To visualize class activation (saliency) maps use `viz_saliency.py` script with 
 
 Generated files:
 * `saliency_fig_PDB-chain_GOname.png`  class activation (saliency) map profile over sequence (see fig below, right)
-* `pymol_viz.py` pymol script for mapping salient residues onto 3D structure
+* `pymol_viz.py` pymol script for mapping salient residues onto 3D structure (pymol ouptut is shown in fig below, left)
 
 ## Example:
 
