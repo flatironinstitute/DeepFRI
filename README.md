@@ -168,7 +168,7 @@ To visualize class activation (saliency) maps use `viz_saliency.py` script with 
 
 Generated files:
 * `saliency_fig_PDB-chain_GOname.png`  class activation (saliency) map profile over sequence (see fig below, right)
-* `pymol_viz.py` pymol script for mapping salient residues onto 3D structure (pymol ouptut is shown in fig below, left)
+* `pymol_viz.py` pymol script for mapping salient residues onto 3D structure (pymol output is shown in fig below, left)
 
 ## Example:
 
