@@ -1,4 +1,4 @@
-# DeepFRIer
+# DeepFRI
 Deep functional residue identification
 <img src="figs/pipeline.png">
 
@@ -19,9 +19,9 @@ Deep functional residue identification
 ```
 ## Dependencies
 
-*DeepFRIer* is tested to work under Python 3.6.
+*DeepFRI* is tested to work under Python 3.6.
 
-The required dependencies for *deepFRIer* are [Keras](https://keras.io/), [TensorFlow](https://www.tensorflow.org/), [Numpy](http://www.numpy.org/) and [scikit-learn](http://scikit-learn.org/).
+The required dependencies for *deepFRI* are [Keras](https://keras.io/), [TensorFlow](https://www.tensorflow.org/), [Numpy](http://www.numpy.org/) and [scikit-learn](http://scikit-learn.org/).
 To install all dependencies run:
 
 ```
@@ -33,19 +33,15 @@ pip install -r dependencies.txt
 To predict protein functions use `predict.py` script with the following options:
 
 * `seq`             str, Protein sequence as a string
-* `cmap`            str, Name of a file storing a protein contact map and sequence in `*.npz` file format
-                    (with the following numpy array variables: `A_ca_10A`, `sequence`, `L`)
-* `cmap_csv`        str, Filename of the catalogue (in `*.csv` file format) containg mapping between protein names and directory with `*.npz` files
-                    (see `examples/catalogue_pdb_chains.csv`)
+* `cmap`            str, Name of a file storing a protein contact map and sequence in `*.npz` file format (with the following numpy array variables: `A_ca_10A`, `sequence`, `L`)
+* `cmap_csv`        str, Filename of the catalogue (in `*.csv` file format) containg mapping between protein names and directory with `*.npz` files (see `examples/catalogue_pdb_chains.csv`)
 * `fasta_fn`        str, Fasta filename
-* `output_fn_prefix`str, Output filename for saving predictions and class
-                    activation maps.
+* `output_fn_prefix`str, Output filename for saving predictions and class activation maps.
 * `verbose`         bool, Whether or not to print function prediction results.
 * `saliency`        bool, Whether or not to compute class activaton maps.
 
 Generated files:
-* `output_fn_prefix_MF_predictions.csv`   Predictions in the `*.csv` file format
-  with columns: `Protein | GO-term/EC-number | Score | GO-term/EC-number name`
+* `output_fn_prefix_MF_predictions.csv`   Predictions in the `*.csv` file format with columns: `Protein, GO-term/EC-number, Score, GO-term/EC-number name`
 * `output_fn_prefix_MF_saliency_maps.pckl` pickle file storing a dictionary of saliency maps for each predicted function of every protein.
 
 *DeepFRI* offers 4 possible options for predicting functions. See examples below.
@@ -129,6 +125,7 @@ To train *deepFRI* run the following command from the project directory:
 Generated files:
 * `model_name_prefix_model.hdf5`   trained model with architecture and weights saved in HDF5 format
 * `model_name_prefix_pred_scores.pckl` pickle file with predicted GO term/EC number scores for test proteins
+* `model_name_prefix_metadata.pckl` pickle file with metadata (GO terms/names, EC numbers/names, optimal thresholds for each GO term/EC number)
 
 # Flags
 
@@ -146,8 +143,7 @@ A number of FLAGS is available to specify the behavior of *deepFRI*, both for pr
 * `ont`             str, GO or EC ontology. Default: `molecular function`
 * `cmap_type`       str, type of contact maps (A_nbr, A_ca or A_all). Default: `A_ca`
 * `lm_model_name`   str, keras pre-trained LSTM Language Model name. Default: `./trained_models/lstm_lm.h5`
-* `split_fn`        str, pickle file with train/test/valid PDB IDs and their annotatin matrix.
-		    Default: `train_test_split_seqsim_30.pckl`
+* `split_fn`        str, pickle file with train/test/valid PDB IDs and their annotatin matrix. Default: `train_test_split_seqsim_30.pckl`
 * `catalogue`       str, csv file mapping PDB IDs to numpy files storing individual contact maps. Default: `catalogue.csv`
 * `train_tfrecord_fn`	str, train tfrecords file name. Default: `train.tfrecords`
 * `valid_tfrecord_fn`	str, validaiton tfrecords file name. Default: `valid.tfrecords`
@@ -156,7 +152,7 @@ A number of FLAGS is available to specify the behavior of *deepFRI*, both for pr
 
 Data (*train.tfrecord*, *valid.tfrecord* files) used for producing figures in the paper can be downloaded from:
 
-https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRIer
+https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI
 
 # Functional residue identification
 <img src="figs/saliency.png">
