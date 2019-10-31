@@ -22,24 +22,35 @@ Deep functional residue identification
 *DeepFRIer* is tested to work under Python 3.6.
 
 The required dependencies for *deepFRIer* are [Keras](https://keras.io/), [TensorFlow](https://www.tensorflow.org/), [Numpy](http://www.numpy.org/) and [scikit-learn](http://scikit-learn.org/).
-To install all dependencies run: `pip install -r dependencies.txt`
+To install all dependencies run:
+
+```
+pip install -r dependencies.txt
+```
 
 
 # Protein function prediction
-To predict functions of a protein use `predict.py` script with the following options:
+To predict protein functions use `predict.py` script with the following options:
 
 * `seq`             str, Protein sequence as a string
-* `cmap`            str, Name of a file storing protein contact map and sequence in `*.npz` file format
-                    (with the following numpy array variables: `A_ca`, `sequence`, `L`)
+* `cmap`            str, Name of a file storing a protein contact map and sequence in `*.npz` file format
+                    (with the following numpy array variables: `A_ca_10A`, `sequence`, `L`)
 * `cmap_csv`        str, Filename of the catalogue (in `*.csv` file format) containg mapping between protein names and directory with `*.npz` files
+                    (see `examples/catalogue_pdb_chains.csv`)
 * `fasta_fn`        str, Fasta filename
 * `output_fn_prefix`str, Output filename for saving predictions and class
                     activation maps.
 * `verbose`         bool, Whether or not to print function prediction results.
 * `saliency`        bool, Whether or not to compute class activaton maps.
 
+Generated files:
+* `output_fn_prefix_MF_predictions.csv`   Predictions in the `*.csv` file format
+  with columns: `Protein | GO-term/EC-number | Score | GO-term/EC-number name`
+* `output_fn_prefix_MF_saliency_maps.pckl` pickle file storing a dictionary of saliency maps for each predicted function of every protein.
 
-## Example:
+*DeepFRI* offers 4 possible options for predicting functions. See examples below.
+
+## Option 1: predicting functions of a protein from its contact map
 
 Predicting MF-GO terms for Parvalbumin alpha protein using its sequence and contact map (PDB: [1S3P](https://www.rcsb.org/structure/1S3P)):
 
@@ -65,11 +76,12 @@ query_prot GO:0032027 0.00001 myosin light chain binding
 
 ```
 
+## Option 2: predicting functions of a protein from its sequence
 
 Predicting MF-GO terms for Parvalbumin alpha protein using its sequence (PDB: [1S3P](https://www.rcsb.org/structure/1S3P)):
 
 ```
->> python predict.py --cmap 'SMTDLLSAEDIKKAIGAFTAADSFDHKKFFQMVGLKKKSADDVKKVFHILDKDKDGFIDEDELGSILKGFSSDARDLSAKETKTLMAAGDKDGDGKIGVEEFSTLVAES' --verbose
+>> python predict.py --seq 'SMTDLLSAEDIKKAIGAFTAADSFDHKKFFQMVGLKKKSADDVKKVFHILDKDKDGFIDEDELGSILKGFSSDARDLSAKETKTLMAAGDKDGDGKIGVEEFSTLVAES' --verbose
 
 ```
 
@@ -89,6 +101,20 @@ query_prot GO:0019237 0.00003 centromeric DNA binding
 query_prot GO:0017151 0.00002 DEAD/H-box RNA helicase binding
 query_prot GO:0032027 0.00001 myosin light chain binding
 query_prot GO:0000171 0.00001 ribonuclease MRP activity
+```
+
+## Option 3: predicting functions of protein from a fasta file
+
+```
+>> python predict.py --fast_fn examples/pdb_chains.fasta
+
+```
+
+## Option 4: predicting functions of protein from catalogue of contact maps
+
+```
+>> python predict.py --cmap_csv examples/catalogue_pdb_chains.csv
+
 ```
 
 
@@ -128,7 +154,7 @@ A number of FLAGS is available to specify the behavior of *deepFRI*, both for pr
 
 ## Data
 
-Data (*train_tfrecord*, *valid_tfrecord* files) used for producing figures in the paper can be downloaded from:
+Data (*train.tfrecord*, *valid.tfrecord* files) used for producing figures in the paper can be downloaded from:
 
 https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRIer
 
