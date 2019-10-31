@@ -151,11 +151,6 @@ A number of FLAGS is available to specify the behavior of *deepFRI*, both for pr
 * `train_tfrecord_fn`	str, train tfrecords file name. Default: `train.tfrecords`
 * `valid_tfrecord_fn`	str, validaiton tfrecords file name. Default: `valid.tfrecords`
 
-## Data
-
-Data (*train.tfrecord*, *valid.tfrecord* files) used for producing figures in the paper can be downloaded from:
-
-https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI
 
 # Functional residue identification
 To visualize class activation (saliency) maps use `viz_saliency.py` script with the following options:
@@ -170,7 +165,7 @@ Generated files:
 * `saliency_fig_PDB-chain_GOname.png`  class activation (saliency) map profile over sequence (see fig below, right)
 * `pymol_viz.py` pymol script for mapping salient residues onto 3D structure
 
-# Example:
+## Example:
 
 ```
 >>> python viz_saliency.py --saliency_fn examples/outputs/DeepFRI_pdb_chains_MF_saliency_maps.pckl --protein_id 1S3P-A --go_id GO:0005509
@@ -179,3 +174,9 @@ Generated files:
 ### Output:
 <img src="figs/saliency.png">
 
+
+# Data
+
+Data (*train.tfrecord*, *valid.tfrecord* files) used for re-training the model can be downloaded from:
+
+https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI
