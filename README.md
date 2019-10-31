@@ -55,7 +55,7 @@ Predicting MF-GO terms for Parvalbumin alpha protein using its sequence and cont
 
 ```
 
-## Output:
+### Output:
 
 
 ```txt
@@ -81,7 +81,7 @@ Predicting MF-GO terms for Parvalbumin alpha protein using its sequence (PDB: [1
 
 ```
 
-## Output:
+### Output:
 
 
 ```txt
