@@ -77,8 +77,9 @@ if __name__ == "__main__":
         # ##
         S = S.reshape(1, *S.shape)
         Y_hat_valid2[i] = model.predict(S)
-    thresholds = get_thresholds(Y_valid2, Y_hat_valid2)
-    pickle.dump({'thresh': thresholds, 'goterms': goterms, 'gonames': gonames}, open(args.results_dir + args.model_name + '_thresholds.pckl', 'wb'))
+    thresholds, f1_scores, accuracies = get_thresholds(Y_valid2, Y_hat_valid2)
+    pickle.dump({'thresh': thresholds, 'f1_scores': f1_scores, 'accuracies': accuracies, 'goterms': goterms, 'gonames': gonames},
+                open(args.results_dir + args.model_name + '_thresholds.pckl', 'wb'))
 
     # compute perf on test chains
     print ("### Computing predictions on test set...")
