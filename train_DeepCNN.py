@@ -79,7 +79,7 @@ if __name__ == "__main__":
         Y_hat_valid2[i] = model.predict(S)
     thresholds, f1_scores, accuracies = get_thresholds(Y_valid2, Y_hat_valid2)
     pickle.dump({'thresh': thresholds, 'f1_scores': f1_scores, 'accuracies': accuracies, 'goterms': goterms, 'gonames': gonames},
-                open(args.results_dir + args.model_name + '_thresholds.pckl', 'wb'))
+                open(args.results_dir + args.model_name + '_metadata.pckl', 'wb'))
 
     # compute perf on test chains
     print ("### Computing predictions on test set...")
