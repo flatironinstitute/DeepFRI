@@ -31,7 +31,7 @@ To predict functions of a protein use `predict.py` script with the following opt
 * `seq`             str, Protein sequence as a string
 * `cmap`            str, Name of a file storing protein contact map and sequence in `*.npz` file format
                     (with the following numpy array variables: `A_ca`, `sequence`, `L`)
-* `cmap_csv`        str, Filename of the catalogue (in `*.csv` file format) containg mapping between protein names and directory of `*.npz` filenames
+* `cmap_csv`        str, Filename of the catalogue (in `*.csv` file format) containg mapping between protein names and directory with `*.npz` files
 * `fasta_fn`        str, Fasta filename
 * `output_fn_prefix`str, Output filename for saving predictions and class
                     activation maps.
@@ -130,12 +130,8 @@ A number of FLAGS is available to specify the behavior of *deepFRI*, both for pr
 
 Data (*train_tfrecord*, *valid_tfrecord* files) used for producing figures in the paper can be downloaded from:
 
-https://users.flatironinstitute.org/vgligorijevic/public_www/deepFRIer
+https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRIer
 
 # Functional residue identification
 <img src="figs/saliency.png">
-
-
-
-
 
