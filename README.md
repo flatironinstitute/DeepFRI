@@ -155,5 +155,12 @@ Data (*train.tfrecord*, *valid.tfrecord* files) used for producing figures in th
 https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI
 
 # Functional residue identification
+To visualize class activation (saliency) maps use `viz_saliency.py` script with the following options:
+
+
+Generated files:
+* `saliency_fig_PDB-chain_GOname.png`  class activation (saliency) map profile over sequence (see fig below, right)
+* `pymol_viz.py` pymol script for mapping salient residues onto 3D structure
+### Output:
 <img src="figs/saliency.png">
 
