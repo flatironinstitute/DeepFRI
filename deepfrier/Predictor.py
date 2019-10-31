@@ -19,7 +19,7 @@ class Predictor(object):
 
     def _load_model(self):
         self.model = load_model(self.model_prefix + '.hdf5', custom_objects={'GraphCNN': GraphCNN, 'micro_aupr': micro_aupr})
-        metadata = pickle.load(open(self.model_prefix + '_thresholds.pckl', 'rb'))
+        metadata = pickle.load(open(self.model_prefix + '_metadata.pckl', 'rb'))
         self.thresh = metadata['thresh']
         self.gonames = metadata['gonames']
         self.goterms = metadata['goterms']
