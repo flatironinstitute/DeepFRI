@@ -60,15 +60,15 @@ Example: predicting MF-GO terms for Parvalbumin alpha protein using its sequence
 
 ```txt
 Protein GO-term/EC-number Score GO-term/EC-number name
-query_prot GO:0043167 0.95134 ion binding
-query_prot GO:0046872 0.90832 metal ion binding
-query_prot GO:0043169 0.90517 cation binding
-query_prot GO:0005509 0.87179 calcium ion binding
-query_prot GO:0043168 0.06332 anion binding
-query_prot GO:0031072 0.00247 heat shock protein binding
-query_prot GO:1901567 0.00099 fatty acid derivative binding
-query_prot GO:0045159 0.00009 myosin II binding
-query_prot GO:0032027 0.00001 myosin light chain binding
+1S3P-A GO:0043167 0.95134 ion binding
+1S3P-A GO:0046872 0.90832 metal ion binding
+1S3P-A GO:0043169 0.90517 cation binding
+1S3P-A GO:0005509 0.87179 calcium ion binding
+1S3P-A GO:0043168 0.06332 anion binding
+1S3P-A GO:0031072 0.00247 heat shock protein binding
+1S3P-A GO:1901567 0.00099 fatty acid derivative binding
+1S3P-A GO:0045159 0.00009 myosin II binding
+1S3P-A GO:0032027 0.00001 myosin light chain binding
 
 ```
 
@@ -114,7 +114,10 @@ query_prot GO:0000171 0.00001 ribonuclease MRP activity
 ```
 
 ### Output:
-see files: `examples/outputs/DeepFRI_pdb_chains_MF_saliency_maps.pckl`, `examples/outputs/DeepFRI_pdb_chains_MF_predictions.csv`
+see files:
+```
+examples/outputs/DeepFRI_pdb_chains_MF_saliency_maps.pckl`, `examples/outputs/DeepFRI_pdb_chains_MF_predictions.csv`
+```
 
 
 
@@ -129,6 +132,8 @@ Generated files:
 * `model_name_prefix_model.hdf5`   trained model with architecture and weights saved in HDF5 format
 * `model_name_prefix_pred_scores.pckl` pickle file with predicted GO term/EC number scores for test proteins
 * `model_name_prefix_metadata.pckl` pickle file with metadata (GO terms/names, EC numbers/names, optimal thresholds for each GO term/EC number)
+
+See examples of pre-trained models in: `trained_models/`.
 
 # Flags
 
@@ -146,10 +151,10 @@ A number of FLAGS is available to specify the behavior of *deepFRI*, both for pr
 * `ont`             str, GO or EC ontology. Default: `molecular function`
 * `cmap_type`       str, type of contact maps (A_nbr, A_ca or A_all). Default: `A_ca`
 * `lm_model_name`   str, keras pre-trained LSTM Language Model name. Default: `./trained_models/lstm_lm.h5`
-* `split_fn`        str, pickle file with train/test/valid PDB IDs and their annotatin matrix. Default: `train_test_split_seqsim_30.pckl`
+* `split_fn`        str, pickle file with train/test/valid PDB IDs and their annotatin matrix. Default: `train_test_split_seqsim_30.pckl` (see Data section below)
 * `catalogue`       str, csv file mapping PDB IDs to numpy files storing individual contact maps. Default: `catalogue.csv`
-* `train_tfrecord_fn`	str, train tfrecords file name. Default: `train.tfrecords`
-* `valid_tfrecord_fn`	str, validaiton tfrecords file name. Default: `valid.tfrecords`
+* `train_tfrecord_fn`	str, train tfrecords file name. Default: `train.tfrecords` (see Data section below)
+* `valid_tfrecord_fn`	str, validaiton tfrecords file name. Default: `valid.tfrecords` (see Data section below)
 
 
 # Functional residue identification
