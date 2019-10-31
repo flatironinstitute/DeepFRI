@@ -173,4 +173,4 @@ class DeepFRI(object):
         plt.savefig(self.results_dir + self.model_name_prefix + '_model_accuracy.png', bbox_inches='tight')
 
     def save_model(self):
-        self.test_model.save(self.results_dir + self.model_name_prefix + '.h5')
+        self.test_model.save(self.results_dir + self.model_name_prefix + '.hdf5')

@@ -5,6 +5,22 @@ import tensorflow as tf
 from keras.callbacks import Callback
 from sklearn.metrics import average_precision_score
 from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import accuracy_score
+
+from Bio import SeqIO
+
+
+def load_FASTA(filename):
+    # Loads fasta file and returns a list of the Bio SeqIO records
+    infile = open(filename, 'rU')
+    entries = []
+    proteins = []
+    for entry in SeqIO.parse(infile, 'fasta'):
+        entries.append(str(entry.seq))
+        proteins.append(str(entry.id))
+    if(len(entries) == 0):
+        return False
+    return proteins, entries
 
 
 def rnd_adj(N, p):
@@ -29,6 +45,8 @@ def norm_adj(A, symm=True):
 
 def get_thresholds(Y_test, Y_hat_test):
     thresholds = []
+    accuracies = []
+    f1_scores = []
     for i in range(Y_test.shape[1]):
         pre, rec, thresh = precision_recall_curve(Y_test[:, i], Y_hat_test[:, i])
         pre = pre[:-1]
@@ -37,9 +55,12 @@ def get_thresholds(Y_test, Y_hat_test):
             f1 = 2*pre*rec/(pre + rec)
         f1[np.isnan(f1)] = 0
         idx = np.argmax(f1)
+        y_hat = (Y_hat_test[:, i] > thresh[idx]).astype(int)
+        accuracies.append(accuracy_score(Y_test[:, i], y_hat))
+        f1_scores.append(f1[idx])
         thresholds.append(thresh[idx])
 
-    return np.asarray(thresholds)
+    return np.asarray(thresholds), np.asarray(f1_scores), np.asarray(accuracies)
 
 
 def _micro_aupr(y_true, y_test):
@@ -202,11 +223,13 @@ def load_catalogue(fn='/mnt/home/dberenberg/ceph/SWISSMODEL_CONTACTMAPS/catalogu
     chain2path = {}
     with open(fn) as tsvfile:
         fRead = csv.reader(tsvfile, delimiter=',')
-        next(fRead, None)
+        # next(fRead, None)
         for line in fRead:
-            pdb = line[0].strip()
-            chain = line[1].strip()
-            path = line[3].strip()
-            chain2path[pdb + '-' + chain] = path
-
+            # pdb = line[0].strip()
+            # chain = line[1].strip()
+            # path = line[3].strip()
+            pdb_chain = line[0].strip()
+            path = line[1].strip()
+            # chain2path[pdb + '-' + chain] = path
+            chain2path[pdb_chain] = path
     return chain2path
