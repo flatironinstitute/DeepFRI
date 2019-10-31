@@ -41,7 +41,7 @@ To predict protein functions use `predict.py` script with the following options:
 * `saliency`        bool, Whether or not to compute class activaton maps.
 
 Generated files:
-* `output_fn_prefix_MF_predictions.csv`   Predictions in the `*.csv` file format with columns: `Protein, GO-term/EC-number, Score, GO-term/EC-number name`
+* `output_fn_prefix_MF_predictions.csv`   Predictions in the `*.csv` file format with columns: Protein, GO-term/EC-number, Score, GO-term/EC-number name.
 * `output_fn_prefix_MF_saliency_maps.pckl` pickle file storing a dictionary of saliency maps for each predicted function of every protein.
 
 *DeepFRI* offers 4 possible options for predicting functions. See examples below.
