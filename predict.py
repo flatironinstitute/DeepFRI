@@ -36,8 +36,10 @@ if __name__ == "__main__":
         ec_predictor.predict(args.seq)
         mf_predictor.predict(args.seq)
     if args.cmap is not None:
-        ec_predictor.predict(args.cmap)
-        mf_predictor.predict(args.cmap)
+        prot_name = args.cmap
+        prot_name = prot_name.split('/')[-1].split('.')[0]
+        ec_predictor.predict(args.cmap, chain=prot_name)
+        mf_predictor.predict(args.cmap, chain=prot_name)
     if args.fasta_fn is not None:
         ec_predictor.predict_from_fasta(args.fasta_fn)
         mf_predictor.predict_from_fasta(args.fasta_fn)
