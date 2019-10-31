@@ -99,14 +99,14 @@ query_prot GO:0032027 0.00001 myosin light chain binding
 query_prot GO:0000171 0.00001 ribonuclease MRP activity
 ```
 
-## Option 3: predicting functions of protein from a fasta file
+## Option 3: predicting functions of proteins from a fasta file
 
 ```
 >> python predict.py --fast_fn examples/pdb_chains.fasta
 
 ```
 
-## Option 4: predicting functions of protein from catalogue of contact maps
+## Option 4: predicting functions of proteins from catalogue of contact maps
 
 ```
 >> python predict.py --cmap_csv examples/catalogue_pdb_chains.csv -o DeeFRI_pdb_chain --saliency
