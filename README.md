@@ -106,7 +106,7 @@ query_prot GO:0000171 0.00001 ribonuclease MRP activity
 
 ```
 
-## Option 4: predicting functions of proteins from catalogue of contact maps
+## Option 4: predicting functions of proteins from contact maps catalogue
 
 ```
 >> python predict.py --cmap_csv examples/catalogue_pdb_chains.csv -o DeeFRI_pdb_chain --saliency
