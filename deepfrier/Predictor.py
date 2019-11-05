@@ -20,7 +20,8 @@ class Predictor(object):
     def _load_model(self):
         self.model = load_model(self.model_prefix + '.hdf5', custom_objects={'GraphCNN': GraphCNN, 'micro_aupr': micro_aupr})
         metadata = pickle.load(open(self.model_prefix + '_metadata.pckl', 'rb'))
-        self.thresh = metadata['thresh']
+        #self.thresh = metadata['thresh']
+        self.thresh  = 0.1 * np.ones(len(metadata['goterms']))
         self.gonames = metadata['gonames']
         self.goterms = metadata['goterms']
 
@@ -129,7 +130,7 @@ class Predictor(object):
 
     def export_csv(self, output_fn, verbose):
         with open(output_fn, 'w') as csvFile:
-            writer = csv.writer(csvFile, delimiter='\t', quotechar='"')
+            writer = csv.writer(csvFile, delimiter=',', quotechar='"')
             writer.writerow(['### Predictions made by DeepFRI.'])
             writer.writerow(['Protein', 'GO_term/EC_number', 'Score', 'GO_term/EC_number name'])
             if verbose:

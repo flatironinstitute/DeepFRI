@@ -165,43 +165,43 @@ if __name__ == "__main__":
 
                 # write script to run in pymol
                 # f.write( "pymol.cmd.remove( \'all\' )\n" )
-                f.write( "pymol.cmd.fetch( \'" + lchains[c] + "\' )\n" )
-                f.write( "time.sleep( 1 )\n" )
-                # f.write( "pymol.cmd.fetch( \'" + lchains[c][0:4] + "\' )\n" )
-                # f.write( "time.sleep( 1 )\n" )
-                f.write( "pymol.cmd.show( \'cartoon\' )\n" )
+                #f.write( "pymol.cmd.fetch( \'" + lchains[c] + "\' )\n" )
+                #f.write( "time.sleep( 1 )\n" )
+                ## f.write( "pymol.cmd.fetch( \'" + lchains[c][0:4] + "\' )\n" )
+                ## f.write( "time.sleep( 1 )\n" )
+                #f.write( "pymol.cmd.show( \'cartoon\' )\n" )
 
-                f.write( "pymol.cmd.set( \'sphere_scale\', \'1\' )\n" )
+                #f.write( "pymol.cmd.set( \'sphere_scale\', \'1\' )\n" )
 
-                # alter b-factor columns with custom coloring
-                cam_string = str( ", ".join( map( str, new_cam ) ) )
-                f.write( "pymol.cmd.alter( \'" + lchains[c] + "\', \'b=0.0\' )\n" )
-                f.write( "stored.cam = [" + cam_string + "]\n" )
-                f.write( "pymol.cmd.alter( \'" + lchains[c] + " and n. CA\', \'b=stored.cam.pop(0)\' )\n" )
+                ## alter b-factor columns with custom coloring
+                #cam_string = str( ", ".join( map( str, new_cam ) ) )
+                #f.write( "pymol.cmd.alter( \'" + lchains[c] + "\', \'b=0.0\' )\n" )
+                #f.write( "stored.cam = [" + cam_string + "]\n" )
+                #f.write( "pymol.cmd.alter( \'" + lchains[c] + " and n. CA\', \'b=stored.cam.pop(0)\' )\n" )
 
-                # a bunch of nice color schemes
-                # f.write( "pymol.cmd.spectrum( \'b\', \'slate_yellow_red\', \'" + lchains[c] + " and n. CA\' )\n" )
-                # f.write( "pymol.cmd.spectrum( \'b\', \'silver_yellow_red\', \'" + lchains[c] + " and n. CA\' )\n" )
-                # f.write( "pymol.cmd.spectrum( \'b\', \'palecyan_silver_magenta\', \'" + lchains[c] + " and n. CA\' )\n" )
-                # f.write( "pymol.cmd.spectrum( \'b\', \'aquamarine_silver_red\', \'" + lchains[c] + " and n. CA\' )\n" )
-                # f.write( "pymol.cmd.spectrum( \'b\', \'lightblue_silver_red\', \'" + lchains[c] + " and n. CA\' )\n" )
-                f.write( "pymol.cmd.spectrum( \'b\', \'blue_white_red\', \'" + lchains[c] + " and n. CA\' )\n" )
+                ## a bunch of nice color schemes
+                ## f.write( "pymol.cmd.spectrum( \'b\', \'slate_yellow_red\', \'" + lchains[c] + " and n. CA\' )\n" )
+                ## f.write( "pymol.cmd.spectrum( \'b\', \'silver_yellow_red\', \'" + lchains[c] + " and n. CA\' )\n" )
+                ## f.write( "pymol.cmd.spectrum( \'b\', \'palecyan_silver_magenta\', \'" + lchains[c] + " and n. CA\' )\n" )
+                ## f.write( "pymol.cmd.spectrum( \'b\', \'aquamarine_silver_red\', \'" + lchains[c] + " and n. CA\' )\n" )
+                ## f.write( "pymol.cmd.spectrum( \'b\', \'lightblue_silver_red\', \'" + lchains[c] + " and n. CA\' )\n" )
+                #f.write( "pymol.cmd.spectrum( \'b\', \'blue_white_red\', \'" + lchains[c] + " and n. CA\' )\n" )
 
-                # sidechain selection, coloring and lines
-                # f.write( "pymol.cmd.select( \'sc_" + lchains[c] + "\', \'" + lchains[c] + " and not name n+ca+c+o\' )\n" )
-                # f.write( "pymol.cmd.color( \'silver\', \'sc_" + lchains[c] + "\' )\n" )
-                # f.write( "pymol.util.cnc( \'sc_" + lchains[c] + "\' )\n" )
-                # f.write( "pymol.cmd.show( \'lines\', \'all and not backbone\' )\n" )
+                ## sidechain selection, coloring and lines
+                ## f.write( "pymol.cmd.select( \'sc_" + lchains[c] + "\', \'" + lchains[c] + " and not name n+ca+c+o\' )\n" )
+                ## f.write( "pymol.cmd.color( \'silver\', \'sc_" + lchains[c] + "\' )\n" )
+                ## f.write( "pymol.util.cnc( \'sc_" + lchains[c] + "\' )\n" )
+                ## f.write( "pymol.cmd.show( \'lines\', \'all and not backbone\' )\n" )
 
-                # ligands, water, etc
-                f.write( "pymol.cmd.select( \'ligs_" + lchains[c] + "\', \'" + lchains[c] + " and het\' )\n" )
-                f.write( "pymol.cmd.select( \'water\', \'resn hoh\' )\n" )
-                f.write( "pymol.cmd.remove( \'water\' )\n" )
-                f.write( "pymol.cmd.show( \'sphere\', \'ligs_" + lchains[c] + "\' )\n" )
-                f.write( "pymol.cmd.color( \'yellow\', \'ligs_" + lchains[c] + "\' )\n" )
-                # f.write( "pymol.util.cnc( \'ligs_" + lchains[c] + "\' )\n" )
-                f.write( "\n" )
-        f.close()
+                ## ligands, water, etc
+                #f.write( "pymol.cmd.select( \'ligs_" + lchains[c] + "\', \'" + lchains[c] + " and het\' )\n" )
+                #f.write( "pymol.cmd.select( \'water\', \'resn hoh\' )\n" )
+                #f.write( "pymol.cmd.remove( \'water\' )\n" )
+                #f.write( "pymol.cmd.show( \'sphere\', \'ligs_" + lchains[c] + "\' )\n" )
+                #f.write( "pymol.cmd.color( \'yellow\', \'ligs_" + lchains[c] + "\' )\n" )
+                ## f.write( "pymol.util.cnc( \'ligs_" + lchains[c] + "\' )\n" )
+                #f.write( "\n" )
+        #f.close()
 
         # open structure in pymol
         # os.system( "pymol viz" + str(window) + ".py &" )
