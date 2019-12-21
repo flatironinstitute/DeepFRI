@@ -2,4 +2,4 @@ sifts_models
 catalogues
 **/__pycache__
 .ropeproject
-
+trained_models/GCN-LM_MERGED_biological_process_EXP-IEA_seqid_95_gcn_128-256-256-512_hidd_1024_softmax_mixed_test.hdf5
