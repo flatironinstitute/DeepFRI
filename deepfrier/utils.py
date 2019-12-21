@@ -9,7 +9,6 @@ from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import accuracy_score
 
 from Bio import SeqIO
-import pickle
 
 
 def load_FASTA(filename):
@@ -212,8 +211,6 @@ def get_batched_dataset(filenames, batch_size=64, pad_len=1200, n_goterms=347, c
 
     dataset = tf.data.TFRecordDataset(filenames=filenames)
     # Parse the serialized data in the TFRecords files.
-    # This returns TensorFlow tensors for the image and labels.
-    # dataset = dataset.map(lambda x: _parse_function(x, n_goterms=n_goterms, channels=channels), num_parallel_calls=5)
     if gcn:
         dataset = dataset.map(lambda x: _parse_function_gcn(x, n_goterms=n_goterms, channels=channels, cmap_type=cmap_type))
     else:
@@ -222,13 +219,10 @@ def get_batched_dataset(filenames, batch_size=64, pad_len=1200, n_goterms=347, c
     # Randomizes input using a window of 512 elements (read into memory)
     dataset = dataset.shuffle(buffer_size=5000)
     dataset = dataset.repeat()  # Repeats dataset this # times
-    # dataset = dataset.batch(batch_size)  # Batch size to use
     if gcn:
         dataset = dataset.padded_batch(batch_size, padded_shapes=([pad_len, pad_len], [pad_len, channels], [None, 2]))
-        # dataset = dataset.padded_batch(batch_size, padded_shapes=([pad_len, pad_len], [pad_len, channels], [None]))
     else:
         dataset = dataset.padded_batch(batch_size, padded_shapes=([pad_len, channels], [None, 2]))
-        # dataset = dataset.padded_batch(batch_size, padded_shapes=([pad_len, channels], [None]))
 
     iterator = dataset.make_one_shot_iterator()
     batch = iterator.get_next()
@@ -242,39 +236,14 @@ def load_catalogue(fn='/mnt/home/dberenberg/ceph/SWISSMODEL_CONTACTMAPS/catalogu
         fRead = csv.reader(tsvfile, delimiter=',')
         # next(fRead, None)
         for line in fRead:
-            # pdb = line[0].strip()
-            # chain = line[1].strip()
-            # path = line[3].strip()
             pdb_chain = line[0].strip()
             path = line[1].strip()
-            # chain2path[pdb + '-' + chain] = path
             chain2path[pdb_chain] = path
     return chain2path
 
 
 if __name__ == "__main__":
-    fn_list = glob.glob('/mnt/ceph/users/vgligorijevic/ContactMaps/data/Swiss-Model/merged_annot/tfrecords/swiss-model_chains_cellular_component_seqid_95_train_EXP-IEA*')
+    fn_list = glob.glob('./tfrecords/swiss-model_chains_cellular_component_seqid_95_train_EXP-IEA*')
     for fn in fn_list:
         n_train_records = sum(1 for _ in tf.python_io.tf_record_iterator(fn))
         print (n_train_records, fn)
-    """
-    annot = np.zeros((20010, 556))
-    S, y = get_batched_dataset(fn_list, pad_len=1000, n_goterms=556, cmap_type='A', gcn=False, batch_size=1)
-    with tf.Session() as sess:
-        for i in range(0, 20010):
-            _, label = sess.run([S, y])
-            annot[i] = label[0]
-
-    pickle.dump(annot, open('valid2_labels.pckl', 'wb'))
-    """
-
-    """
-    S, y, _ = get_batched_dataset(fn_list, batch_size=50, n_goterms=734, gcn=False)
-    with tf.Session() as sess:
-        sess.run(tf.global_variables_initializer())
-        for epoch in range(20):
-            S, y = sess.run([S, y])
-            for i in range(0, 32):
-                print (np.where(y[i, :, 0] == 1)[0])
-            print ('\n')
-    """

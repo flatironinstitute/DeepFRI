@@ -172,13 +172,9 @@ class DeepCNN(object):
         plt.savefig(self.results_dir + self.model_name_prefix + '_model_loss.png', bbox_inches='tight')
 
         plt.figure()
-        # plt.plot(self.history['micro_aupr'], '-')
-        # plt.plot(self.history['val_micro_aupr'], '-')
         plt.plot(self.history['acc'], '-')
         plt.plot(self.history['val_acc'], '-')
-        # plt.title('model AUPR')
         plt.title('model accuracy')
-        # plt.ylabel('micro-AUPR')
         plt.ylabel('accuracy')
         plt.xlabel('epoch')
         plt.legend(['train', 'validation'], loc='upper left')
