@@ -78,8 +78,8 @@ class GraphCNN(Layer):
         return output
 
     def compute_output_shape(self, input_shape):
+        # output_shape = (input_shape[0][0], input_shape[0][1], self.output_dim)
         output_shape = (input_shape[0][0], input_shape[0][1], self.output_dim)
-        # output_shape = (input_shape[0][0], input_shape[0][1], 2*self.output_dim)
         return output_shape
 
     def get_config(self):

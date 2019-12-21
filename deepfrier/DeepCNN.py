@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from .utils import micro_aupr, get_batched_dataset, EvaluateInputTensor
+from .utils import get_batched_dataset, EvaluateInputTensor
 
 from keras.models import Model, load_model
 from keras import regularizers
@@ -8,7 +8,9 @@ from keras import regularizers
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 
-from keras.layers import Concatenate, Add, Conv1D, BatchNormalization
+from keras.layers import Concatenate, Add, Conv1D
+from keras.layers import BatchNormalization
+from keras.layers import Reshape
 from keras.layers import Dense, Dropout, Input, Activation, GlobalMaxPooling1D
 
 import matplotlib.pyplot as plt
@@ -63,25 +65,33 @@ class DeepCNN(object):
         x = Concatenate()(x_concat)
         x = BatchNormalization()(x)
         x = Activation('relu', name='CNN_concatenate')(x)
-        x = Dropout(self.drop)(x)
+        # x = Dropout(self.drop)(x)
 
         # CNN layers
-        x = Conv1D(filters=int(2*sum(self.num_filters)), kernel_size=3, padding='same')(x)
-        x = BatchNormalization()(x)
-        x = Activation('relu', name='CNN_layer')(x)
+        # x = Conv1D(filters=int(2*sum(self.num_filters)), kernel_size=3, padding='same')(x)
+        # x = BatchNormalization()(x)
+        # x = Activation('relu', name='CNN_layer')(x)
 
         # 1-d features
         x = GlobalMaxPooling1D()(x)
         x = Dropout(2*self.drop)(x)
 
         # Output layer
-        x = Dense(units=self.output_dim, name='functions')(x)
-        output_layer = Activation('sigmoid')(x)
+        output_layers = []
+        for i in range(self.output_dim):
+            x_out = Dense(units=2, activation='softmax', name='goterm_' + str(i+1))(x)
+            x_out = Reshape(target_shape=(1, 2))(x_out)
+            output_layers.append(x_out)
+        output_layer = Concatenate(axis=1, name='functions')(output_layers)
+
+        # output_layer = Dense(self.output_dim, activation='sigmoid', name='functions')(x)
+
         model = Model(inputs=input_seq, outputs=output_layer)
         print (model.summary())
 
         optimizer = Adam(lr=self.lr, beta_1=0.95, beta_2=0.99)
-        model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['acc', micro_aupr], target_tensors=output_label)
+        # model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['acc'], target_tensors=output_label)
+        model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['acc'], target_tensors=output_label)
 
         return model
 
@@ -91,33 +101,35 @@ class DeepCNN(object):
         # self.final_model = None
 
         # train model
-        S_train_batch, y_train_batch = get_batched_dataset([train_tfrecord_fn], batch_size=batch_size, pad_len=pad_len,
+        S_train_batch, y_train_batch = get_batched_dataset(train_tfrecord_fn, batch_size=batch_size, pad_len=pad_len,
                                                            n_goterms=self.output_dim, channels=self.n_channels, gcn=False)
 
         train_input_seq = Input(tensor=S_train_batch, name='seq')
         self.train_model = self._build_model(train_input_seq, [y_train_batch])
 
         # validation model
-        S_valid_batch, y_valid_batch = get_batched_dataset([valid_tfrecord_fn], batch_size=batch_size, pad_len=pad_len,
+        S_valid_batch, y_valid_batch = get_batched_dataset(valid_tfrecord_fn, batch_size=batch_size, pad_len=pad_len,
                                                            n_goterms=self.output_dim, channels=self.n_channels, gcn=False)
 
         valid_input_seq = Input(tensor=S_valid_batch, name='seq')
         self.valid_model = self._build_model(valid_input_seq, [y_valid_batch])
 
         # final model
-        S_batch, y_batch = get_batched_dataset([train_tfrecord_fn, valid_tfrecord_fn], batch_size=batch_size, pad_len=pad_len,
-                                               n_goterms=self.output_dim, channels=self.n_channels, gcn=False)
+        # S_batch, y_batch = get_batched_dataset(train_tfrecord_fn, valid_tfrecord_fn, batch_size=batch_size, pad_len=pad_len,
+        #                                        n_goterms=self.output_dim, channels=self.n_channels, gcn=False)
 
         # input_seq = Input(tensor=S_batch, name='seq')
         # self.final_model = self._build_model(input_seq, [y_batch])
 
-    def train(self, train_tfrecord_fn, valid_tfrecord_fn, model_name_prefix, epochs=100, batch_size=64, pad_len=1200):
+    def train(self, train_tfrecord_fn, valid_tfrecord_fn, model_name_prefix, epochs=100, batch_size=64, pad_len=1200, class_weight=None):
         self.model_name_prefix = model_name_prefix
         self._initialize_model(train_tfrecord_fn, valid_tfrecord_fn, batch_size=batch_size, pad_len=pad_len)
 
         # loading data
-        n_train_records = sum(1 for _ in tf.python_io.tf_record_iterator(train_tfrecord_fn))
-        n_valid_records = sum(1 for _ in tf.python_io.tf_record_iterator(valid_tfrecord_fn))
+        n_train_records = sum(1 for f in train_tfrecord_fn for _ in tf.python_io.tf_record_iterator(f))
+        n_valid_records = sum(1 for f in valid_tfrecord_fn for _ in tf.python_io.tf_record_iterator(f))
+        # n_train_records = sum(1 for _ in tf.python_io.tf_record_iterator(train_tfrecord_fn))
+        # n_valid_records = sum(1 for _ in tf.python_io.tf_record_iterator(valid_tfrecord_fn))
         print ("### Training on: ", n_train_records, "contact maps.")
         print ("### Validating on: ", n_valid_records, "contact maps.")
 
@@ -131,6 +143,7 @@ class DeepCNN(object):
         # fit model
         history = self.train_model.fit(epochs=epochs,
                                        steps_per_epoch=n_train_records//batch_size,
+                                       class_weight=class_weight,
                                        callbacks=[EvaluateInputTensor(self.valid_model, steps=n_valid_records//batch_size), es, mc])
         self.history = history.history
 
@@ -159,10 +172,14 @@ class DeepCNN(object):
         plt.savefig(self.results_dir + self.model_name_prefix + '_model_loss.png', bbox_inches='tight')
 
         plt.figure()
-        plt.plot(self.history['micro_aupr'], '-')
-        plt.plot(self.history['val_micro_aupr'], '-')
-        plt.title('model AUPR')
-        plt.ylabel('micro-AUPR')
+        # plt.plot(self.history['micro_aupr'], '-')
+        # plt.plot(self.history['val_micro_aupr'], '-')
+        plt.plot(self.history['acc'], '-')
+        plt.plot(self.history['val_acc'], '-')
+        # plt.title('model AUPR')
+        plt.title('model accuracy')
+        # plt.ylabel('micro-AUPR')
+        plt.ylabel('accuracy')
         plt.xlabel('epoch')
         plt.legend(['train', 'validation'], loc='upper left')
         plt.savefig(self.results_dir + self.model_name_prefix + '_model_accuracy.png', bbox_inches='tight')

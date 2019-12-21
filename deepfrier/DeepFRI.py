@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from .utils import micro_aupr, get_batched_dataset, EvaluateInputTensor
+from .utils import get_batched_dataset, EvaluateInputTensor
 
 import keras.backend as K
 from keras.models import Model, load_model
@@ -9,8 +9,9 @@ from keras import regularizers
 from keras.optimizers import Adam
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 
-from keras.layers import Concatenate, Add
+from keras.layers import Concatenate, Add, Reshape
 from keras.layers import Dense, Dropout, Input, Lambda, Activation
+# from keras.layers import Conv1D, BatchNormalization
 from .GCN_layer import GraphCNN
 
 import matplotlib.pyplot as plt
@@ -49,19 +50,21 @@ class DeepFRI(object):
         else:
             self.lm_model = None
 
-    def _build_model(self, input_cmap, input_seq, output_label):
+    def _build_model(self, input_cmap, input_seq, output_labels):
+        # Encoding layers
         x_aa = Dense(self.gcn_dims[0], use_bias=False, name='AA_embedding')(input_seq)
         if self.lm_model is not None:
             x_lm = Dense(self.gcn_dims[0], use_bias=True, name='LM_embedding')(self.lm_model(input_seq))
             x_aa = Add(name='Emedding')([x_lm, x_aa])
         x = Activation('relu')(x_aa)
 
-        # Encoding layer
+        # GCN layer
         gcnn_concat = []
         for l in range(0, len(self.gcn_dims)):
             x = GraphCNN(self.gcn_dims[l], use_bias=False, activation='relu',
                          kernel_regularizer=regularizers.l2(self.l2_reg), name='GCNN_' + str(l+1))([x, input_cmap])
             gcnn_concat.append(x)
+            # x = Concatenate(name='GCNN_concatenate_' + str(l + 1))(gcnn_concat)
         x = Concatenate(name='GCNN_concatenate')(gcnn_concat)
 
         # Sum pooling
@@ -70,15 +73,24 @@ class DeepFRI(object):
         # Dense layers
         for l in range(0, len(self.hidd_dims)):
             x = Dense(units=self.hidd_dims[l], activation='relu')(x)
-            x = Dropout((l+1)*self.drop)(x)
+            x = Dropout((l + 1)*self.drop)(x)
 
-        x = Dense(units=self.output_dim, name='functions')(x)
-        output_layer = Activation('sigmoid')(x)
+        # Output layer
+        output_layers = []
+        for i in range(self.output_dim):
+            x_out = Dense(units=2, activation='softmax', name='goterm_' + str(i+1))(x)
+            x_out = Reshape(target_shape=(1, 2))(x_out)
+            output_layers.append(x_out)
+        output_layer = Concatenate(axis=1, name='functions')(output_layers)
+
+        # output_layer = Dense(units=self.output_dim, activation='sigmoid', name='functions')(x)
+
         model = Model(inputs=[input_cmap, input_seq], outputs=output_layer)
         print (model.summary())
 
         optimizer = Adam(lr=self.lr, beta_1=0.95, beta_2=0.99)
-        model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['acc', micro_aupr], target_tensors=output_label)
+        # model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['acc'], target_tensors=output_labels)
+        model.compile(optimizer=optimizer, loss='categorical_crossentropy', metrics=['acc'], target_tensors=output_labels)
 
         return model
 
@@ -88,8 +100,12 @@ class DeepFRI(object):
         # self.final_model = None
 
         # train model
-        A_train_batch, S_train_batch, y_train_batch = get_batched_dataset([train_tfrecord_fn], batch_size=batch_size, pad_len=pad_len,
-                                                                          n_goterms=self.output_dim, channels=self.n_channels, cmap_type=cmap_type)
+        A_train_batch, S_train_batch, y_train_batch = get_batched_dataset(train_tfrecord_fn,
+                                                                          batch_size=batch_size,
+                                                                          pad_len=pad_len,
+                                                                          n_goterms=self.output_dim,
+                                                                          channels=self.n_channels,
+                                                                          cmap_type=cmap_type)
 
         train_input_cmap = Input(tensor=A_train_batch, name='cmap')
         train_input_seq = Input(tensor=S_train_batch, name='seq')
@@ -97,8 +113,12 @@ class DeepFRI(object):
         self.train_model = self._build_model(train_input_cmap, train_input_seq, [y_train_batch])
 
         # validation model
-        A_valid_batch, S_valid_batch, y_valid_batch = get_batched_dataset([valid_tfrecord_fn], batch_size=batch_size, pad_len=pad_len,
-                                                                          n_goterms=self.output_dim, channels=self.n_channels, cmap_type=cmap_type)
+        A_valid_batch, S_valid_batch, y_valid_batch = get_batched_dataset(valid_tfrecord_fn,
+                                                                          batch_size=batch_size,
+                                                                          pad_len=pad_len,
+                                                                          n_goterms=self.output_dim,
+                                                                          channels=self.n_channels,
+                                                                          cmap_type=cmap_type)
         valid_input_cmap = Input(tensor=A_valid_batch, name='cmap')
         valid_input_seq = Input(tensor=S_valid_batch, name='seq')
         print ("### Compiling valid model....")
@@ -114,13 +134,15 @@ class DeepFRI(object):
         # print ("### Compiling final model....")
         # self.final_model = self._build_model(input_cmap, input_seq, [y_batch])
 
-    def train(self, train_tfrecord_fn, valid_tfrecord_fn, model_name_prefix, epochs=100, batch_size=64, pad_len=1200, cmap_type='A_ca'):
+    def train(self, train_tfrecord_fn, valid_tfrecord_fn, model_name_prefix, epochs=100, batch_size=64, pad_len=1200, cmap_type='A_ca', class_weight=None):
         self.model_name_prefix = model_name_prefix
         self._initialize_model(train_tfrecord_fn, valid_tfrecord_fn, batch_size=batch_size, pad_len=pad_len, cmap_type=cmap_type)
 
         # loading data
-        n_train_records = sum(1 for _ in tf.python_io.tf_record_iterator(train_tfrecord_fn))
-        n_valid_records = sum(1 for _ in tf.python_io.tf_record_iterator(valid_tfrecord_fn))
+        n_train_records = sum(1 for f in train_tfrecord_fn for _ in tf.python_io.tf_record_iterator(f))
+        n_valid_records = sum(1 for f in valid_tfrecord_fn for _ in tf.python_io.tf_record_iterator(f))
+        # n_train_records = sum(1 for _ in tf.python_io.tf_record_iterator(train_tfrecord_fn))
+        # n_valid_records = sum(1 for _ in tf.python_io.tf_record_iterator(valid_tfrecord_fn))
         print ("### Training on: ", n_train_records, "contact maps.")
         print ("### Validating on: ", n_valid_records, "contact maps.")
 
@@ -134,6 +156,7 @@ class DeepFRI(object):
         # fit model
         history = self.train_model.fit(epochs=epochs,
                                        steps_per_epoch=n_train_records//batch_size,
+                                       class_weight=class_weight,
                                        callbacks=[EvaluateInputTensor(self.valid_model, steps=n_valid_records//batch_size), es, mc])
         self.history = history.history
 
@@ -164,10 +187,13 @@ class DeepFRI(object):
         plt.savefig(self.results_dir + self.model_name_prefix + '_model_loss.png', bbox_inches='tight')
 
         plt.figure()
-        plt.plot(self.history['micro_aupr'], '-')
-        plt.plot(self.history['val_micro_aupr'], '-')
-        plt.title('model AUPR')
-        plt.ylabel('micro-AUPR')
+        # plt.plot(self.history['micro_aupr'], '-')
+        # plt.plot(self.history['val_micro_aupr'], '-')
+        plt.plot(self.history['acc'], '-')
+        plt.plot(self.history['val_acc'], '-')
+        plt.title('model accuracy')
+        plt.ylabel('accuracy')
+        # plt.ylabel('micro-AUPR')
         plt.xlabel('epoch')
         plt.legend(['train', 'validation'], loc='upper left')
         plt.savefig(self.results_dir + self.model_name_prefix + '_model_accuracy.png', bbox_inches='tight')

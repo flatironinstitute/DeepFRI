@@ -2,12 +2,14 @@ import csv
 import numpy as np
 import networkx as nx
 import tensorflow as tf
+import glob
 from keras.callbacks import Callback
 from sklearn.metrics import average_precision_score
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import accuracy_score
 
 from Bio import SeqIO
+import pickle
 
 
 def load_FASTA(filename):
@@ -140,7 +142,7 @@ def _parse_function_gcn(serialized, n_goterms, channels, cmap_type='A_ca'):
     features = {
         cmap_type: tf.VarLenFeature(dtype=tf.float32),
         "S": tf.VarLenFeature(dtype=tf.float32),
-        "label": tf.FixedLenFeature([n_goterms], dtype=tf.int64),
+        "labels": tf.FixedLenFeature([n_goterms], dtype=tf.int64),
         "L": tf.FixedLenFeature([1], dtype=tf.int64)
     }
     # Parse the serialized data so we get a dict with our data.
@@ -161,8 +163,15 @@ def _parse_function_gcn(serialized, n_goterms, channels, cmap_type='A_ca'):
     S = tf.sparse_tensor_to_dense(S)
     S = tf.reshape(S, S_shape)
 
-    y = parsed_example['label']
-    y = tf.cast(y, tf.float32)
+    # y = parsed_example['labels']
+    # y = tf.cast(y, tf.float32)
+
+    labels = parsed_example['labels']
+    labels = tf.cast(labels, tf.float32)
+
+    inverse_labels = tf.cast(tf.equal(labels, 0), dtype=tf.float32)  # [batch, classes]
+    y = tf.stack([labels, inverse_labels], axis=-1)  # labels, inverse labels
+    y = tf.reshape(y, shape=[n_goterms, 2])  # [batch, classes, Pos-Neg].
 
     return A, S, y
 
@@ -170,9 +179,10 @@ def _parse_function_gcn(serialized, n_goterms, channels, cmap_type='A_ca'):
 def _parse_function_cnn(serialized, n_goterms, channels):
     features = {
         "S": tf.VarLenFeature(dtype=tf.float32),
-        "label": tf.FixedLenFeature([n_goterms], dtype=tf.int64),
-        "L": tf.FixedLenFeature([1], dtype=tf.int64)
+        "labels": tf.FixedLenFeature([n_goterms], dtype=tf.int64),
+        "L": tf.FixedLenFeature([1], dtype=tf.int64),
     }
+
     # Parse the serialized data so we get a dict with our data.
     parsed_example = tf.parse_single_example(serialized=serialized, features=features)
 
@@ -185,8 +195,15 @@ def _parse_function_cnn(serialized, n_goterms, channels):
     S = tf.sparse_tensor_to_dense(S)
     S = tf.reshape(S, S_shape)
 
-    y = parsed_example['label']
-    y = tf.cast(y, tf.float32)
+    # y = parsed_example['labels']
+    # y = tf.cast(y, tf.float32)
+
+    labels = parsed_example['labels']
+    labels = tf.cast(labels, tf.float32)
+
+    inverse_labels = tf.cast(tf.equal(labels, 0), dtype=tf.float32)  # [batch, classes]
+    y = tf.stack([labels, inverse_labels], axis=-1)  # labels, inverse labels
+    y = tf.reshape(y, shape=[n_goterms, 2])  # [batch, classes, Pos-Neg].
 
     return S, y
 
@@ -203,17 +220,17 @@ def get_batched_dataset(filenames, batch_size=64, pad_len=1200, n_goterms=347, c
         dataset = dataset.map(lambda x: _parse_function_cnn(x, n_goterms=n_goterms, channels=channels))
 
     # Randomizes input using a window of 512 elements (read into memory)
-    dataset = dataset.shuffle(buffer_size=128)
+    dataset = dataset.shuffle(buffer_size=5000)
     dataset = dataset.repeat()  # Repeats dataset this # times
     # dataset = dataset.batch(batch_size)  # Batch size to use
     if gcn:
-        dataset = dataset.padded_batch(batch_size, padded_shapes=([pad_len, pad_len], [pad_len, channels], [None]))
+        dataset = dataset.padded_batch(batch_size, padded_shapes=([pad_len, pad_len], [pad_len, channels], [None, 2]))
+        # dataset = dataset.padded_batch(batch_size, padded_shapes=([pad_len, pad_len], [pad_len, channels], [None]))
     else:
-        dataset = dataset.padded_batch(batch_size, padded_shapes=([pad_len, channels], [None]))
+        dataset = dataset.padded_batch(batch_size, padded_shapes=([pad_len, channels], [None, 2]))
+        # dataset = dataset.padded_batch(batch_size, padded_shapes=([pad_len, channels], [None]))
 
     iterator = dataset.make_one_shot_iterator()
-    # next_S, next_y = iterator.get_next()
-    # next_A, next_S, next_y = iterator.get_next()
     batch = iterator.get_next()
 
     return batch
@@ -233,3 +250,31 @@ def load_catalogue(fn='/mnt/home/dberenberg/ceph/SWISSMODEL_CONTACTMAPS/catalogu
             # chain2path[pdb + '-' + chain] = path
             chain2path[pdb_chain] = path
     return chain2path
+
+
+if __name__ == "__main__":
+    fn_list = glob.glob('/mnt/ceph/users/vgligorijevic/ContactMaps/data/Swiss-Model/merged_annot/tfrecords/swiss-model_chains_cellular_component_seqid_95_train_EXP-IEA*')
+    for fn in fn_list:
+        n_train_records = sum(1 for _ in tf.python_io.tf_record_iterator(fn))
+        print (n_train_records, fn)
+    """
+    annot = np.zeros((20010, 556))
+    S, y = get_batched_dataset(fn_list, pad_len=1000, n_goterms=556, cmap_type='A', gcn=False, batch_size=1)
+    with tf.Session() as sess:
+        for i in range(0, 20010):
+            _, label = sess.run([S, y])
+            annot[i] = label[0]
+
+    pickle.dump(annot, open('valid2_labels.pckl', 'wb'))
+    """
+
+    """
+    S, y, _ = get_batched_dataset(fn_list, batch_size=50, n_goterms=734, gcn=False)
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for epoch in range(20):
+            S, y = sess.run([S, y])
+            for i in range(0, 32):
+                print (np.where(y[i, :, 0] == 1)[0])
+            print ('\n')
+    """
