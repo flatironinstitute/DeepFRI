@@ -3,3 +3,4 @@ catalogues
 **/__pycache__
 .ropeproject
 trained_models/CNN-1HOT_MERGED-biological_process_EXP-IEA_seqid_95_filter_nums_16x512_filter_lens_8-128_softmax_mixed_test.hdf5
+deepfrier/.ropeproject
