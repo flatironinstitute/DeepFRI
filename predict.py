@@ -18,19 +18,19 @@ if __name__ == "__main__":
     if args.seq is not None or args.fasta_fn is not None:
         gcn = False
         layer_name = "CNN_layer"
-        models = {"ec": "./results/CNN-1HOT_MERGED-enzyme_commission_EXP-IEA_seqid_95_filter_nums_8x512_filter_lens_8-64_softmax_mixed_test",
-                  "mf": "./results/CNN-1HOT_MERGED-molecular_function_EXP-IEA_seqid_95_filter_nums_16x512_filter_lens_8-128_softmax_mixed_test",
-                  "bp": "./results/CNN-1HOT_MERGED-biological_process_EXP-IEA_seqid_95_filter_nums_16x512_filter_lens_8-128_softmax_mixed_test",
-                  "cc": "./results/CNN-1HOT_MERGED-cellular_component_EXP-IEA_seqid_95_filter_nums_16x512_filter_lens_8-128_softmax_mixed_test"
+        models = {"ec": "./trained_models/CNN-1HOT_MERGED-enzyme_commission_EXP-IEA_seqid_95_filter_nums_8x512_filter_lens_8-64_softmax_mixed_test",
+                  "mf": "./trained_models/CNN-1HOT_MERGED-molecular_function_EXP-IEA_seqid_95_filter_nums_16x512_filter_lens_8-128_softmax_mixed_test",
+                  "bp": "./trained_models/CNN-1HOT_MERGED-biological_process_EXP-IEA_seqid_95_filter_nums_16x512_filter_lens_8-128_softmax_mixed_test",
+                  "cc": "./trained_models/CNN-1HOT_MERGED-cellular_component_EXP-IEA_seqid_95_filter_nums_16x512_filter_lens_8-128_softmax_mixed_test"
                   }
 
     elif args.cmap is not None or args.cmap_csv is not None:
         gcn = True
         layer_name = "GCNN_concatenate"
-        models = {"mf": "./results/GCN-LM_MERGED_molecular_function_EXP-IEA_seqid_95_gcn_256-256-512_hidd_1024_softmax_mixed_test",
-                  "bp": "./results/GCN-LM_MERGED_biological_process_EXP-IEA_seqid_95_gcn_128-256-256-512_hidd_1024_softmax_mixed_test",
-                  "cc": "./results/GCN-LM_MERGED_cellular_component_EXP-IEA_seqid_95_gcn_128-128-256_hidd_512_softmax_mixed_test",
-                  'ec': "./results/GCN-LM_MERGED_enzyme_commission_EXP-IEA_seqid_95_gcn_256-256-512_hidd_800_softmax_mixed_test"
+        models = {"mf": "./trained_models/GCN-LM_MERGED_molecular_function_EXP-IEA_seqid_95_gcn_256-256-512_hidd_1024_softmax_mixed_test",
+                  "bp": "./trained_models/GCN-LM_MERGED_biological_process_EXP-IEA_seqid_95_gcn_128-256-256-512_hidd_1024_softmax_mixed_test",
+                  "cc": "./trained_models/GCN-LM_MERGED_cellular_component_EXP-IEA_seqid_95_gcn_128-128-256_hidd_512_softmax_mixed_test",
+                  'ec': "./trained_models/GCN-LM_MERGED_enzyme_commission_EXP-IEA_seqid_95_gcn_256-256-512_hidd_800_softmax_mixed_test"
                   }
 
     for ont in args.ontology:
