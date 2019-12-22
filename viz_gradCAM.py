@@ -4,21 +4,22 @@ import pickle
 import argparse
 import numpy as np
 import seaborn as sns
-import os, sys
+import os
+import sys
 
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 
+
 # draw class activation map
-def draw_cam(window, cam, pdb_chain, goterm, sequence, results_dir="./results/CAM/", fname=None):
+def draw_cam(window, cam, pdb_chain, goname, sequence, results_dir="./results/CAM/", fname=None):
     #  Prepare the final display
     seq = [s for s in sequence]
     x = np.arange(len(seq))
     y = cam.reshape(-1)
 
-
     # draw the class activation map
-    buf = '%s: Function = %s' % (pdb_chain, goterm)
+    buf = '%s: Function = %s' % (pdb_chain, goname)
     fig, axes = plt.subplots(nrows=2, ncols=1)
     axes[0].plot(x, y, color='gray', label='gradCAM')
     axes[0].set_title(buf, fontsize=16)
@@ -32,14 +33,15 @@ def draw_cam(window, cam, pdb_chain, goterm, sequence, results_dir="./results/CA
     axes[1].set_yticks([])
     axes[1].set_xticks([])
     plt.axis('tight')
-    plt.savefig( "fig_" + pdb_chain + "_" + goterm + "_" + ".png")
+    plt.savefig("saliency_fig_" + pdb_chain + "_" + "_".join(goname.split(' ')) + ".png")
+
 
 # average over window, window has to be odd
-def window_avg( values, window_size ):
+def window_avg(values, window_size):
 
     # check for odd window
-    if window_size%2 == 0:
-        sys.error( "window length has to be odd number" )
+    if window_size % 2 == 0:
+        sys.error("window length has to be odd number")
 
     half = int((window_size-1)/2)
 
@@ -47,25 +49,25 @@ def window_avg( values, window_size ):
     lengthened = values.copy()
 
     # add half a window to beginning with value of the first element
-    for i in range( 0, half ):
-        lengthened.insert( 0, values[0] )
+    for i in range(0, half):
+        lengthened.insert(0, values[0])
 
     # add half a window to beginning with value of the last element
-    for i in range( 0, half ):
-        lengthened.append( values[-1] )
+    for i in range(0, half):
+        lengthened.append(values[-1])
 
     avg = []
     # sum values over list, creating a new list
-    for i in range( 0, len( values )):
+    for i in range(0, len(values)):
 
         this_sum = 0
-        for j in range( 0, window_size ):
+        for j in range(0, window_size):
             this_sum += lengthened[i+j]
-        avg.append( this_sum / window_size )
+        avg.append(this_sum / window_size)
 
     return avg
 
-#=============================================================
+#  =============================================================
 
 if __name__ == "__main__":
     # Training settings
@@ -105,7 +107,7 @@ if __name__ == "__main__":
                 goterm = pred[chain]['GO_ids'][gt]
                 goname = str(pred[chain]['GO_names'][gt])
                 seq = pred[chain]['sequence']
-                cam = pred[chain]['saliency_maps'][gt][0]
+                cam = pred[chain]['saliency_maps'][gt]
 
                 if (chain_id is not None and chain == chain_id) or (go_id is not None and go_id == goterm) or (go_name is not None and goname.find( go_name ) != -1 ):
                     lchains.append( chain )
@@ -123,11 +125,11 @@ if __name__ == "__main__":
         if args.go_name is not None and go_name not in lgoname:
             raise ValueError("GO keywords not in the list.")
 
-        # go through picked ones
+        # go through the picked ones
         c = 0
 
-        os.system( "rm viz" + str(window) + ".py" )
-        with open( 'viz' + str(window) + '.py', 'w' ) as f:
+        os.system( "rm pymol_viz.py" )
+        with open( 'pymol_viz.py', 'w' ) as f:
             f.write( "#!/usr/bin/env python\n" )
             f.write( "import time\n" )
             f.write( "import pymol\n\n" )
@@ -136,8 +138,6 @@ if __name__ == "__main__":
             f.write( "pymol.cmd.set( \'sphere_scale\', \'0.5\' )\n" )
 
             for c in range(0, len(lchains)):
-
-                # print (c, len(lchains), chain_id, lchains[c])
 
                 if ( go_id is None and chain_id is not None ):
                     sys.exit( "ERROR: GO id is required for correct plotting!" )
@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
                 cam_values = (np.ndarray.tolist(lcam[c]))[0]
                 new_cam = window_avg( cam_values, window )
-                draw_cam(window, np.array( [window_avg( cam_values, window )] ), lchains[c], lgoterm[c], lseq[c])
+                draw_cam(window, np.array( [window_avg( cam_values, window )] ), lchains[c], lgoname[c], lseq[c])
 
                 # write script to run in pymol
                 # f.write( "pymol.cmd.remove( \'all\' )\n" )
@@ -193,4 +193,4 @@ if __name__ == "__main__":
         f.close()
 
         # open structure in pymol
-        os.system( "pymol viz" + str(window) + ".py &" )
+        # os.system( "pymol viz" + str(window) + ".py &" )
