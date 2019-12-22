@@ -141,7 +141,7 @@ class Predictor(object):
                         print (prot, row[0], '{:.5f}'.format(row[2]), row[1])
                     writer.writerow([prot, row[0], '{:.5f}'.format(row[2]), row[1]])
         csvFile.close()
-    """
+
     def _gradCAM(self, input_data_list, class_idx, layer_name='GCNN_layer'):
         class_output = self.model.output[:, class_idx, 0]
         last_conv_layer = self.model.get_layer(layer_name)
@@ -170,8 +170,8 @@ class Predictor(object):
             heatmaps.append(heatmap)
 
         return heatmaps
-    """
 
+    """
     def _gradCAM(self, input_data_list, class_idx, layer_name='GCNN_layer'):
         pos_class_output = self.model.output[:, class_idx, 0]
         neg_class_output = self.model.output[:, class_idx, 1]
@@ -213,6 +213,29 @@ class Predictor(object):
             heatmaps.append((pos_heatmap, neg_heatmap))
 
         return heatmaps
+    """
+
+    def compute_gradCAM(self, layer_name='GCNN_layer'):
+        print ("### Computing gradCAM for each function of every predicted protein...")
+        self.pdb2cam = {}
+        for go_indx in self.goidx2chains:
+            input_data = []
+            pred_chains = list(self.goidx2chains[go_indx])
+            print ("### Computing gradCAM for ", self.gonames[go_indx], '... [# proteins=', len(pred_chains), ']')
+            for chain in pred_chains:
+                input_data.append(self.data[chain][0])
+                if chain not in self.pdb2cam:
+                    self.pdb2cam[chain] = {}
+                    self.pdb2cam[chain]['GO_ids'] = []
+                    self.pdb2cam[chain]['GO_names'] = []
+                    self.pdb2cam[chain]['sequence'] = None
+                    self.pdb2cam[chain]['saliency_maps'] = []
+                self.pdb2cam[chain]['GO_ids'].append(self.goterms[go_indx])
+                self.pdb2cam[chain]['GO_names'].append(self.gonames[go_indx])
+                self.pdb2cam[chain]['sequence'] = self.data[chain][1]
+            heatmaps = self._gradCAM(input_data, go_indx, layer_name=layer_name)
+            for i, chain in enumerate(pred_chains):
+                self.pdb2cam[chain]['saliency_maps'].append(heatmaps[i])
 
     """
     def compute_gradCAM(self, layer_name='GCNN_layer'):
@@ -237,28 +260,6 @@ class Predictor(object):
             for i, chain in enumerate(pred_chains):
                 self.pdb2cam[chain]['saliency_maps'].append(heatmaps[i])
     """
-
-    def compute_gradCAM(self, layer_name='GCNN_layer'):
-        print ("### Computing gradCAM for each function of every predicted protein...")
-        self.pdb2cam = {}
-        for go_indx in self.goidx2chains:
-            input_data = []
-            pred_chains = list(self.goidx2chains[go_indx])
-            print ("### Computing gradCAM for ", self.gonames[go_indx], '... [# proteins=', len(pred_chains), ']')
-            for chain in pred_chains:
-                input_data.append(self.data[chain][0])
-                if chain not in self.pdb2cam:
-                    self.pdb2cam[chain] = {}
-                    self.pdb2cam[chain]['GO_ids'] = []
-                    self.pdb2cam[chain]['GO_names'] = []
-                    self.pdb2cam[chain]['sequence'] = None
-                    self.pdb2cam[chain]['saliency_maps'] = []
-                self.pdb2cam[chain]['GO_ids'].append(self.goterms[go_indx])
-                self.pdb2cam[chain]['GO_names'].append(self.gonames[go_indx])
-                self.pdb2cam[chain]['sequence'] = self.data[chain][1]
-            heatmaps = self._gradCAM(input_data, go_indx, layer_name=layer_name)
-            for i, chain in enumerate(pred_chains):
-                self.pdb2cam[chain]['saliency_maps'].append(heatmaps[i])
 
     def save_gradCAM(self, output_fn):
         print ("### Saving CAMs to *.pckl file...")
