@@ -173,7 +173,7 @@ Generated files:
 ## Example:
 
 ```
->>> python viz_saliency.py --saliency_fn examples/outputs/DeepFRI_pdb_chains_MF_saliency_maps.pckl --protein_id 1S3P-A --go_id GO:0005509
+>>> python viz_gradCAM.py --saliency_fn examples/outputs/DeepFRI_pdb_chains_MF_saliency_maps.pckl --protein_id 1S3P-A --go_id GO:0005509
 ```
 
 ### Output:
