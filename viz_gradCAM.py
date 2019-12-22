@@ -109,12 +109,36 @@ if __name__ == "__main__":
                 seq = pred[chain]['sequence']
                 cam = pred[chain]['saliency_maps'][gt]
 
-                if (chain_id is not None and chain == chain_id) or (go_id is not None and go_id == goterm) or (go_name is not None and goname.find( go_name ) != -1 ):
-                    lchains.append( chain )
-                    lgoterm.append( goterm )
-                    lgoname.append( goname )
-                    lseq.append( seq )
-                    lcam.append( cam )
+                if (chain_id is not None and chain == chain_id) and (go_id is not None and go_id == goterm):
+                    lchains.append(chain)
+                    lgoterm.append(goterm)
+                    lgoname.append(goname)
+                    lseq.append(seq)
+                    lcam.append(cam)
+                if (chain_id is not None and chain == chain_id) and (go_name is not None and goname.find(go_name) != -1):
+                    lchains.append(chain)
+                    lgoterm.append(goterm)
+                    lgoname.append(goname)
+                    lseq.append(seq)
+                    lcam.append(cam)
+                if (chain_id is not None and chain == chain_id) and (go_name is None) and (go_id is None):
+                    lchains.append(chain)
+                    lgoterm.append(goterm)
+                    lgoname.append(goname)
+                    lseq.append(seq)
+                    lcam.append(cam)
+                if (go_id is not None and go_id == goterm) and (chain_id is None) and (go_name is None):
+                    lchains.append(chain)
+                    lgoterm.append(goterm)
+                    lgoname.append(goname)
+                    lseq.append(seq)
+                    lcam.append(cam)
+                if (go_name is not None and goname.find(go_name) != -1) and (chain_id is None) and (go_id is None):
+                    lchains.append(chain)
+                    lgoterm.append(goterm)
+                    lgoname.append(goname)
+                    lseq.append(seq)
+                    lcam.append(cam)
 
         if args.protein_id is not None and chain_id not in lchains:
             raise ValueError("PDB chain ID not in the list.")
@@ -122,13 +146,10 @@ if __name__ == "__main__":
         if args.go_id is not None and go_id not in lgoterm:
             raise ValueError("GO ID not in the list.")
 
-        if args.go_name is not None and go_name not in lgoname:
-            raise ValueError("GO keywords not in the list.")
-
         # go through the picked ones
         c = 0
 
-        os.system( "rm pymol_viz.py" )
+        # os.system( "rm pymol_viz.py" )
         with open( 'pymol_viz.py', 'w' ) as f:
             f.write( "#!/usr/bin/env python\n" )
             f.write( "import time\n" )
@@ -138,7 +159,7 @@ if __name__ == "__main__":
             f.write( "pymol.cmd.set( \'sphere_scale\', \'0.5\' )\n" )
 
             for c in range(0, len(lchains)):
-
+                """
                 if ( go_id is None and chain_id is not None ):
                     sys.exit( "ERROR: GO id is required for correct plotting!" )
 
@@ -147,6 +168,7 @@ if __name__ == "__main__":
 
                 if ( chain_id is not None and chain_id != lchains[c] ):
                     continue
+                """
 
                 cam_values = (np.ndarray.tolist(lcam[c]))[0]
                 new_cam = window_avg( cam_values, window )
