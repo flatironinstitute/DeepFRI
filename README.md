@@ -25,7 +25,7 @@ The required dependencies for *deepFRI* are [Keras](https://keras.io/), [TensorF
 To install all dependencies run:
 
 ```
-pip install -r dependencies.txt
+pip install .
 ```
 
 
