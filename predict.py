@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     if args.seq is not None or args.fasta_fn is not None:
         gcn = False
-        layer_name = "CNN_layer"
+        layer_name = "CNN_concatenate"
         models = {"ec": "./trained_models/CNN-1HOT_MERGED-enzyme_commission_EXP-IEA_seqid_95_filter_nums_8x512_filter_lens_8-64_softmax_mixed_test",
                   "mf": "./trained_models/CNN-1HOT_MERGED-molecular_function_EXP-IEA_seqid_95_filter_nums_16x512_filter_lens_8-128_softmax_mixed_test",
                   "bp": "./trained_models/CNN-1HOT_MERGED-biological_process_EXP-IEA_seqid_95_filter_nums_16x512_filter_lens_8-128_softmax_mixed_test",
@@ -46,6 +46,7 @@ if __name__ == "__main__":
         if args.cmap_csv is not None:
             predictor.predict_from_catalogue(args.cmap_csv)
         predictor.export_csv(args.output_fn_prefix + "_" + ont.upper() + "_predictions.csv", args.verbose)
+        predictor.save_predictions(args.output_fn_prefix + "_" + ont.upper() + "_pred_scores.pckl")
 
         if args.saliency and ont in ['mf']:
             predictor.compute_gradCAM(layer_name=layer_name)
