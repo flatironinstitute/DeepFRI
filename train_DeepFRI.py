@@ -3,9 +3,7 @@ import argparse
 import glob
 import numpy as np
 
-import keras.backend as K
-
-from deepfrier.utils import load_catalogue, rnd_adj
+from deepfrier.utils import load_catalogue, rnd_adj, norm_adj
 
 from deepfrier.DeepFRI import DeepFRI
 from deepfrier.utils import seq2onehot
@@ -33,10 +31,10 @@ if __name__ == "__main__":
     parser.add_argument('--catalogue', type=str, default="/mnt/ceph/users/vgligorijevic/ContactMaps/data/nr_pdb_chains/catalogue.csv",
                         help="Catalogue with chain to file (in *.npz format) path mapping.")
     parser.add_argument('--train_tfrecord_fn', type=str,
-                        default="/mnt/ceph/users/vgligorijevic/ContactMaps/data/TFRecord/pdb_chains_GO_seqid_30_train_EXP-IEA.tfrecords",
+                        default="/mnt/ceph/users/vgligorijevic/ContactMaps/data/Swiss-Model/merged_annot/tfrecords/*_chains_molecular_function_seqid_30_train_EXP-IEA",
                         help="Train tfrecords.")
     parser.add_argument('--valid_tfrecord_fn', type=str,
-                        default="/mnt/ceph/users/vgligorijevic/ContactMaps/data/TFRecord/pdb_chains_GO_seqid_30_valid_EXP-IEA.tfrecords",
+                        default="/mnt/ceph/users/vgligorijevic/ContactMaps/data/Swiss-Model/merged_annot/tfrecords/*_chains_molecular_function_seqid_30_valid_EXP-IEA",
                         help="Valid tfrecords.")
 
     args = parser.parse_args()
@@ -86,7 +84,6 @@ if __name__ == "__main__":
     pos_weights = np.maximum(1.0, np.minimum(10.0, pos_weights))
     pos_weights = np.concatenate([pos_weights.reshape((len(pos_weights), 1)), pos_weights.reshape((len(pos_weights), 1))], axis=-1)
 
-    K.get_session()
     print ("### Training model: ", args.model_name, " on ", output_dim, " GO terms.")
     model = DeepFRI(output_dim=output_dim, results_dir=args.results_dir, n_channels=26, gcn_dims=args.gcn_dims,
                     hidd_dims=args.hidden_dims, lr=args.lr, drop=args.dropout, l2_reg=args.l2_reg, lm_model_name=args.lm_model_name)
@@ -112,7 +109,18 @@ if __name__ == "__main__":
     lengths = []
     for i, chain in enumerate(test_chains):
         cmap = np.load(chain2path[chain])
-        A = cmap['A_ca_10A']
+        if args.cmap_type == 'A_ca':
+            A = cmap['A_ca_10A']
+        elif args.cmap_type == 'A_all':
+            A = cmap['A_all_6A']
+        elif args.cmap_type == 'A_nbr':
+            if 'A_nbr' in cmap:
+                A = cmap['A_nbr']
+            else:
+                A = norm_adj(cmap['A_nbr_bin'])
+        else:
+            print ('## Wrong key in cmap!')
+
         S = seq2onehot(str(cmap['sequence']))
         L = cmap['L'].item()
         p = (np.count_nonzero(A) - L)/float(L*(L-1))
@@ -135,5 +143,3 @@ if __name__ == "__main__":
                 'Y_dummy_test': Y_dummy_test, 'Y_rnd_test': Y_rnd_test, 'goterms': goterms,
                  'gonames': gonames, 'chain_ids': test_chains, 'cmap_types': test_cmap_types},
                 open(args.results_dir + args.model_name + '_pred_scores.pckl', 'wb'))
-    # close session
-    K.clear_session()
