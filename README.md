@@ -188,3 +188,8 @@ Data (train and validation) used for training DeepFRI model are provided as Tens
 | --- | --- |
 | [Gene Ontology](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/PDB-GO.tar.gz) | [Gene Ontology](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/SWISS-MODEL-GO.tar.gz) |
 | [Enzyme Commission](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/PDB-EC.tar.gz) | [Enzyme Commission](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/SWISS-MODEL-EC.tar.gz) |
+
+# Pretrained model
+
+Pretrained models can be downloaded from:
+[Models](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/trained_models.tar.gz)
