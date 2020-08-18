@@ -22,7 +22,7 @@ class Predictor(object):
         metadata = pickle.load(open(self.model_prefix + '_metadata.pckl', 'rb'))
         self.gonames = metadata['gonames']
         self.goterms = metadata['goterms']
-        self.thresh = 0.5*np.ones(len(self.goterms))
+        self.thresh = 0.1*np.ones(len(self.goterms))
 
     def predict(self, test_prot, chain='query_prot'):
         print ("### Computing predictions on a single protein...")
@@ -63,13 +63,13 @@ class Predictor(object):
     def predict_from_catalogue(self, catalogue_fn):
         print ("### Computing predictions from catalogue...")
         self.chain2path = load_catalogue(catalogue_fn)
-        test_prot_list = list(self.chain2path.keys())
-        self.Y_hat = np.zeros((len(test_prot_list), len(self.goterms)), dtype=float)
+        self.test_prot_list = list(self.chain2path.keys())
+        self.Y_hat = np.zeros((len(self.test_prot_list), len(self.goterms)), dtype=float)
         self.goidx2chains = {}
         self.prot2goterms = {}
         self.data = {}
         if self.gcn:
-            for i, chain in enumerate(test_prot_list):
+            for i, chain in enumerate(self.test_prot_list):
                 cmap = np.load(self.chain2path[chain])
                 A = cmap['A_ca_10A']
                 S = seq2onehot(str(cmap['sequence']))
@@ -86,7 +86,7 @@ class Predictor(object):
                     self.goidx2chains[idx].add(chain)
                     self.prot2goterms[chain].append((self.goterms[idx], self.gonames[idx], float(y[idx])))
         else:
-            for i, chain in enumerate(test_prot_list):
+            for i, chain in enumerate(self.test_prot_list):
                 cmap = np.load(self.chain2path[chain])
                 S = seq2onehot(str(cmap['sequence']))
                 S = S.reshape(1, *S.shape)
@@ -103,13 +103,13 @@ class Predictor(object):
 
     def predict_from_fasta(self, fasta_fn):
         print ("### Computing predictions from fasta...")
-        test_prot_list, sequences = load_FASTA(fasta_fn)
-        self.Y_hat = np.zeros((len(test_prot_list), len(self.goterms)), dtype=float)
+        self.test_prot_list, sequences = load_FASTA(fasta_fn)
+        self.Y_hat = np.zeros((len(self.test_prot_list), len(self.goterms)), dtype=float)
         self.goidx2chains = {}
         self.prot2goterms = {}
         self.data = {}
 
-        for i, chain in enumerate(test_prot_list):
+        for i, chain in enumerate(self.test_prot_list):
             S = seq2onehot(str(sequences[i]))
             S = S.reshape(1, *S.shape)
             y = self.model.predict(S)[:, :, 0].reshape(-1)
@@ -125,7 +125,7 @@ class Predictor(object):
 
     def save_predictions(self, output_fn):
         print ("### Saving predictions to *.pckl file...")
-        pickle.dump({'goidx2chains': self.goidx2chains, 'Y_hat': self.Y_hat, 'goterms': self.goterms, 'gonames': self.gonames}, open(output_fn, 'wb'))
+        pickle.dump({'pdb_chains': self.test_prot_list, 'Y_hat': self.Y_hat, 'goterms': self.goterms, 'gonames': self.gonames}, open(output_fn, 'wb'))
 
     def export_csv(self, output_fn, verbose):
         with open(output_fn, 'w') as csvFile:

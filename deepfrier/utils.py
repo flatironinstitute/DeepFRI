@@ -34,6 +34,7 @@ def rnd_adj(N, p):
 def norm_adj(A, symm=True):
     #  Normalize adj matrix
     if symm:
+        A -= np.diag(np.diag(A))
         A += np.eye(A.shape[1])
         d = 1.0/np.sqrt(A.sum(axis=1))
         d = np.diag(d)
@@ -217,7 +218,7 @@ def get_batched_dataset(filenames, batch_size=64, pad_len=1200, n_goterms=347, c
         dataset = dataset.map(lambda x: _parse_function_cnn(x, n_goterms=n_goterms, channels=channels))
 
     # Randomizes input using a window of 512 elements (read into memory)
-    dataset = dataset.shuffle(buffer_size=5000)
+    dataset = dataset.shuffle(buffer_size=1000)
     dataset = dataset.repeat()  # Repeats dataset this # times
     if gcn:
         dataset = dataset.padded_batch(batch_size, padded_shapes=([pad_len, pad_len], [pad_len, channels], [None, 2]))
@@ -243,7 +244,10 @@ def load_catalogue(fn='/mnt/home/dberenberg/ceph/SWISSMODEL_CONTACTMAPS/catalogu
 
 
 if __name__ == "__main__":
-    fn_list = glob.glob('./tfrecords/swiss-model_chains_cellular_component_seqid_95_train_EXP-IEA*')
+    fn_list = glob.glob('/mnt/ceph/users/vgligorijevic/ContactMaps/TFRecords/PDB_train*.tfrecords')
+    _sum = 0
     for fn in fn_list:
         n_train_records = sum(1 for _ in tf.python_io.tf_record_iterator(fn))
+        _sum += n_train_records
         print (n_train_records, fn)
+    print ("Total=", _sum)

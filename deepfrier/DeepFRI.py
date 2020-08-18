@@ -65,7 +65,10 @@ class DeepFRI(object):
                          kernel_regularizer=regularizers.l2(self.l2_reg), name='GCNN_' + str(l+1))([x, input_cmap])
             gcnn_concat.append(x)
             # x = Concatenate(name='GCNN_concatenate_' + str(l + 1))(gcnn_concat)
-        x = Concatenate(name='GCNN_concatenate')(gcnn_concat)
+        if len(gcnn_concat) > 1:
+            x = Concatenate(name='GCNN_concatenate')(gcnn_concat)
+        else:
+            x = gcnn_concat[0]
 
         # Sum pooling
         x = Lambda(lambda z: K.sum(z, axis=1), name='Sum_Pooling')(x)
