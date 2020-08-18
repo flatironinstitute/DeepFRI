@@ -184,4 +184,4 @@ Generated files:
 
 Data (*train.tfrecord*, *valid.tfrecord* files) used for re-training the model can be downloaded from:
 
-https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data
+https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/
