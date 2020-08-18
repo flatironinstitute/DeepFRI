@@ -12,25 +12,26 @@ if __name__ == "__main__":
     parser.add_argument('-ont', '--ontology', type=str, default=['mf'], nargs='+', choices=['mf', 'bp', 'cc', 'ec'], help="Gene Ontology/Enzyme Commission.")
     parser.add_argument('-o', '--output_fn_prefix', type=str, default='DeepFRI', help="Save predictions/saliency in file.")
     parser.add_argument('-v', '--verbose', help="Prints predictions.", action="store_true")
+    parser.add_argument('--use_guided_grads', help="Prints predictions.", action="store_true")
     parser.add_argument('--saliency', help="Compute saliency maps for every protein and every MF-GO term.", action="store_true")
     args = parser.parse_args()
 
     if args.seq is not None or args.fasta_fn is not None:
         gcn = False
         layer_name = "CNN_concatenate"
-        models = {"ec": "./trained_models/CNN-1HOT_MERGED-enzyme_commission_EXP-IEA_seqid_95_filter_nums_8x512_filter_lens_8-64_softmax_mixed_test",
-                  "mf": "./trained_models/CNN-1HOT_MERGED-molecular_function_EXP-IEA_seqid_95_filter_nums_16x512_filter_lens_8-128_softmax_mixed_test",
-                  "bp": "./trained_models/CNN-1HOT_MERGED-biological_process_EXP-IEA_seqid_95_filter_nums_16x512_filter_lens_8-128_softmax_mixed_test",
-                  "cc": "./trained_models/CNN-1HOT_MERGED-cellular_component_EXP-IEA_seqid_95_filter_nums_16x512_filter_lens_8-128_softmax_mixed_test"
+        models = {"ec": "./results/DeepCNN-MERGED_enzyme_commission",
+                  "mf": "./results/DeepCNN-MERGED_molecular_function",
+                  "bp": "./results/DeepCNN-MERGED_biological_process",
+                  "cc": "./results/DeepCNN-MERGED_cellular_component"
                   }
 
     elif args.cmap is not None or args.cmap_csv is not None:
         gcn = True
         layer_name = "GCNN_concatenate"
-        models = {"mf": "./trained_models/GCN-LM_MERGED_molecular_function_EXP-IEA_seqid_95_gcn_256-256-512_hidd_1024_softmax_mixed_test",
-                  "bp": "./trained_models/GCN-LM_MERGED_biological_process_EXP-IEA_seqid_95_gcn_128-256-256-512_hidd_1024_softmax_mixed_test",
-                  "cc": "./trained_models/GCN-LM_MERGED_cellular_component_EXP-IEA_seqid_95_gcn_128-128-256_hidd_512_softmax_mixed_test",
-                  'ec': "./trained_models/GCN-LM_MERGED_enzyme_commission_EXP-IEA_seqid_95_gcn_256-256-512_hidd_800_softmax_mixed_test"
+        models = {"mf": "./results/DeepFRI-MERGED_MultiGraphConv_3x512_fcd_1024_ca_10A_molecular_function",
+                  "bp": "./results/DeepFRI-MERGED_MultiGraphConv_3x512_fcd_2048_ca_10A_biological_process",
+                  "cc": "./results/DeepFRI-MERGED_MultiGraphConv_3x512_fcd_1024_ca_10A_cellular_component",
+                  'ec': "./results/DeepFRI-MERGED_MultiGraphConv_3x512_fcd_1024_ca_10A_enzyme_commission"
                   }
 
     for ont in args.ontology:
@@ -46,8 +47,8 @@ if __name__ == "__main__":
         if args.cmap_csv is not None:
             predictor.predict_from_catalogue(args.cmap_csv)
         predictor.export_csv(args.output_fn_prefix + "_" + ont.upper() + "_predictions.csv", args.verbose)
-        predictor.save_predictions(args.output_fn_prefix + "_" + ont.upper() + "_pred_scores.pckl")
+        # predictor.save_predictions(args.output_fn_prefix + "_" + ont.upper() + "_pred_scores.pckl")
 
-        if args.saliency and ont in ['mf']:
-            predictor.compute_gradCAM(layer_name=layer_name)
-            predictor.save_gradCAM(args.output_fn_prefix + "_" + ont.upper() + "_saliency_maps.pckl")
+        if args.saliency and ont in ['mf', 'ec']:
+            predictor.compute_GradCAM(layer_name=layer_name, use_guided_grads=args.use_guided_grads)
+            predictor.save_GradCAM(args.output_fn_prefix + "_" + ont.upper() + "_saliency_maps.pckl")
