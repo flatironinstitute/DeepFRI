@@ -186,7 +186,7 @@ Data (train and validation) used for training DeepFRI model are provided as Tens
 
 | PDB | SWISS-MODEL |
 | --- | --- |
-| [GeneOntology] (https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/PDB-GO.tar.gz) |
-[GeneOntology] (https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/SWISS-MODEL-GO.tar.gz) |
-| [EnzymeCommission] (https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/PDB-EC.tar.gz) |
-[EnzymeCommission] (https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/SWISS-MODEL-EC.tar.gz) |
+| [GeneOntology](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/PDB-GO.tar.gz) |
+[GeneOntology](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/SWISS-MODEL-GO.tar.gz) |
+| [EnzymeCommission](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/PDB-EC.tar.gz) |
+[EnzymeCommission](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/SWISS-MODEL-EC.tar.gz) |
