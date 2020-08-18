@@ -182,6 +182,11 @@ Generated files:
 
 # Data
 
-Data (*train.tfrecord*, *valid.tfrecord* files) used for re-training the model can be downloaded from:
+Data (train and validation) used for training DeepFRI model are provided as TensorFlow-specific `TFRecord` files and they can be downloaded from:
 
-https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/
+| PDB | SWISS-MODEL |
+| --- | --- |
+(https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/PDB-GO.tar.gz) | [GeneOntology]
+(https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/SWISS-MODEL-GO.tar.gz) | [GeneOntology] |
+| (https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/PDB-EC.tar.gz) | [EnzymeCommission]
+(https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/SWISS-MODEL-EC.tar.gz) | [EnzymeCommission] |
