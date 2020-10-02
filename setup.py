@@ -1,17 +1,16 @@
 from setuptools import setup
 from setuptools import find_packages
 
-setup(name='DeepFRIer',
+setup(name='DeepFRI',
       version='0.0.1',
       description='Implementation of Deep Functional Residue Identification',
       author='Vladimir Gligorijevic',
       author_email='vgligorijevic@flatironinstitute.org',
-      url='https://github.com/flatironinstitute/DeepFRIer',
-      download_url='https://github.com/flatironinstitute/DeepFRIer',
+      url='https://github.com/flatironinstitute/DeepFRI',
+      download_url='https://github.com/flatironinstitute/DeepFRI',
       license='FlatironInstitute',
-      install_requires=['numpy==1.18.1',
-                        'keras==2.2.4',
-                        'tensorflow-gpu==1.10.0',
+      install_requires=['numpy==1.14.5',
+                        'tensorflow-gpu==2.2.0',
                         'networkx==2.1',
                         'scikit-learn==0.19.0',
                         'biopython==1.70',
@@ -19,5 +18,5 @@ setup(name='DeepFRIer',
       extras_require={
           'visualization': ['matplotlib', 'seaborn'],
       },
-      package_data={'DeepFRIer': ['README.md']},
+      package_data={'DeepFRI': ['README.md']},
       packages=find_packages())
