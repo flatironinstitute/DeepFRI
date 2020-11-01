@@ -3,8 +3,11 @@ sifts_models
 ncov2019
 catalogues
 old_slurm
-**/__pycache__
+new_pdb
+__pycache__
 .ropeproject
-trained_models/CNN-1HOT_MERGED-biological_process_EXP-IEA_seqid_95_filter_nums_16x512_filter_lens_8-128_softmax_mixed_test.hdf5
+trained_models
 deepfrier/.ropeproject
+pred_cmaps_benchmark
 tasks.txt
+rosetta_aupr_perf.py

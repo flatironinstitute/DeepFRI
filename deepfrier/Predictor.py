@@ -1,10 +1,11 @@
 import csv
+import glob
 import json
 import pickle
 import numpy as np
 import tensorflow as tf
 
-from .utils import load_catalogue, load_FASTA, seq2onehot
+from .utils import load_catalogue, load_FASTA, load_predicted_PDB, seq2onehot
 from .layers import MultiGraphConv, FuncPredictor, SumPooling
 
 
@@ -16,8 +17,6 @@ class GradCAM(object):
     def __init__(self, model, layer_name="GCNN_concatenate"):
         self.grad_model = tf.keras.models.Model([model.inputs], [model.get_layer(layer_name).output, model.output])
 
-    # @staticmethod
-    # @tf.function
     def _get_gradients_and_filters(self, inputs, class_idx, use_guided_grads=False):
         with tf.GradientTape() as tape:
             conv_outputs, predictions = self.grad_model(inputs)
@@ -29,7 +28,6 @@ class GradCAM(object):
 
         return conv_outputs, grads
 
-    # @staticmethod
     def _compute_cam(self, output, grad):
         weights = tf.reduce_mean(grad, axis=1)
         # perform weighted sum
@@ -67,28 +65,40 @@ class Predictor(object):
         self.goterms = np.asarray(metadata['goterms'])
         self.thresh = 0.1*np.ones(len(self.goterms))
 
+    def _load_cmap(self, filename, cmap_thresh=10.0):
+        if filename.endswith('.pdb'):
+            D, seq = load_predicted_PDB(filename)
+            A = np.double(D < cmap_thresh)
+        elif filename.endswith('.npz'):
+            cmap = np.load(filename)
+            if 'C_alpha' not in cmap:
+                raise ValueError("C_alpha not in *.npz dict.")
+            D = cmap['C_alpha']
+            A = np.double(D < cmap_thresh)
+            seq = str(cmap['seqres'])
+        else:
+            raise ValueError("File must be given in *.npz or *.pdb format.")
+        # ##
+        S = seq2onehot(seq)
+        S = S.reshape(1, *S.shape)
+        A = A.reshape(1, *A.shape)
+
+        return A, S, seq
+
     def predict(self, test_prot, cmap_thresh=10.0, chain='query_prot'):
         print ("### Computing predictions on a single protein...")
         self.Y_hat = np.zeros((1, len(self.goterms)), dtype=float)
         self.goidx2chains = {}
         self.prot2goterms = {}
         self.data = {}
+        self.test_prot_list = [chain]
         if self.gcn:
-            cmap = np.load(test_prot)
-
-            # ##
-            A = cmap['C_alpha']
-            A = np.double(A < cmap_thresh)
-            # ##
-            S = seq2onehot(str(cmap['seqres']))
-
-            S = S.reshape(1, *S.shape)
-            A = A.reshape(1, *A.shape)
+            A, S, seqres = self._load_cmap(test_prot, cmap_thresh=cmap_thresh)
 
             y = self.model([A, S], training=False).numpy()[:, :, 0].reshape(-1)
             self.Y_hat[0] = y
             self.prot2goterms[chain] = []
-            self.data[chain] = [[A, S], str(cmap['seqres'])]
+            self.data[chain] = [[A, S], seqres]
             go_idx = np.where((y >= self.thresh) == True)[0]
             for idx in go_idx:
                 if idx not in self.goidx2chains:
@@ -109,6 +119,28 @@ class Predictor(object):
                 self.goidx2chains[idx].add(chain)
                 self.prot2goterms[chain].append((self.goterms[idx], self.gonames[idx], float(y[idx])))
 
+    def predict_from_PDB_dir(self, dir_name, cmap_thresh=10.0):
+        print ("### Computing predictions from directory with PDB files...")
+        pdb_fn_list = glob.glob(dir_name + '/*.pdb')
+        self.chain2path = {pdb_fn.split('/')[-1].split('.')[0] for pdb_fn in pdb_fn_list}
+        self.test_prot_list = list(self.chain2path.keys())
+        self.Y_hat = np.zeros((len(self.test_prot_list), len(self.goterms)), dtype=float)
+        self.goidx2chains = {}
+        self.prot2goterms = {}
+        self.data = {}
+        for i, chain in enumerate(self.test_prot_list):
+            A, S, seqres = self._load_cmap(self.chain2path[chain], cmap_thresh=cmap_thresh)
+            y = self.model([A, S], training=False).numpy()[:, :, 0].reshape(-1)
+            self.Y_hat[i] = y
+            self.prot2goterms[chain] = []
+            self.data[chain] = [[A, S], seqres]
+            go_idx = np.where((y >= self.thresh) == True)[0]
+            for idx in go_idx:
+                if idx not in self.goidx2chains:
+                    self.goidx2chains[idx] = set()
+                self.goidx2chains[idx].add(chain)
+                self.prot2goterms[chain].append((self.goterms[idx], self.gonames[idx], float(y[idx])))
+
     def predict_from_catalogue(self, catalogue_fn, cmap_thresh=10.0):
         print ("### Computing predictions from catalogue...")
         self.chain2path = load_catalogue(catalogue_fn)
@@ -117,48 +149,18 @@ class Predictor(object):
         self.goidx2chains = {}
         self.prot2goterms = {}
         self.data = {}
-        if self.gcn:
-            for i, chain in enumerate(self.test_prot_list):
-                cmap = np.load(self.chain2path[chain])
-
-                # ##
-                A = cmap['C_alpha']
-                A = np.double(A < cmap_thresh)
-
-                # ##
-                S = seq2onehot(str(cmap['seqres']))
-
-                S = S.reshape(1, *S.shape)
-                A = A.reshape(1, *A.shape)
-
-                y = self.model([A, S], training=False).numpy()[:, :, 0].reshape(-1)
-                self.Y_hat[i] = y
-                self.prot2goterms[chain] = []
-                self.data[chain] = [[A, S], str(cmap['seqres'])]
-                go_idx = np.where((y >= self.thresh) == True)[0]
-                for idx in go_idx:
-                    if idx not in self.goidx2chains:
-                        self.goidx2chains[idx] = set()
-                    self.goidx2chains[idx].add(chain)
-                    self.prot2goterms[chain].append((self.goterms[idx], self.gonames[idx], float(y[idx])))
-        else:
-            for i, chain in enumerate(self.test_prot_list):
-                cmap = np.load(self.chain2path[chain])
-
-                # ##
-                S = seq2onehot(str(cmap['seqres']))
-                S = S.reshape(1, *S.shape)
-
-                y = self.model(S, training=False).numpy()[:, :, 0].reshape(-1)
-                self.Y_hat[i] = y
-                self.prot2goterms[chain] = []
-                self.data[chain] = [[S], str(cmap['seqres'])]
-                go_idx = np.where((y >= self.thresh) == True)[0]
-                for idx in go_idx:
-                    if idx not in self.goidx2chains:
-                        self.goidx2chains[idx] = set()
-                    self.goidx2chains[idx].add(chain)
-                    self.prot2goterms[chain].append((self.goterms[idx], self.gonames[idx], float(y[idx])))
+        for i, chain in enumerate(self.test_prot_list):
+            A, S, seqres = self._load_cmap(self.chain2path[chain], cmap_thresh=cmap_thresh)
+            y = self.model([A, S], training=False).numpy()[:, :, 0].reshape(-1)
+            self.Y_hat[i] = y
+            self.prot2goterms[chain] = []
+            self.data[chain] = [[A, S], seqres]
+            go_idx = np.where((y >= self.thresh) == True)[0]
+            for idx in go_idx:
+                if idx not in self.goidx2chains:
+                    self.goidx2chains[idx] = set()
+                self.goidx2chains[idx].add(chain)
+                self.prot2goterms[chain].append((self.goterms[idx], self.gonames[idx], float(y[idx])))
 
     def predict_from_fasta(self, fasta_fn):
         print ("### Computing predictions from fasta...")

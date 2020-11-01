@@ -19,9 +19,9 @@ Deep functional residue identification
 ```
 ## Dependencies
 
-*DeepFRI* is tested to work under Python 3.6.
+*DeepFRI* is tested to work under Python 3.7.
 
-The required dependencies for *deepFRI* are [Keras](https://keras.io/), [TensorFlow](https://www.tensorflow.org/), [Numpy](http://www.numpy.org/) and [scikit-learn](http://scikit-learn.org/).
+The required dependencies for *deepFRI* are  [TensorFlow](https://www.tensorflow.org/), [Biopython](https://biopython.org/) and [scikit-learn](http://scikit-learn.org/).
 To install all dependencies run:
 
 ```
