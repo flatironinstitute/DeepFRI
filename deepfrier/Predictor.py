@@ -122,7 +122,7 @@ class Predictor(object):
     def predict_from_PDB_dir(self, dir_name, cmap_thresh=10.0):
         print ("### Computing predictions from directory with PDB files...")
         pdb_fn_list = glob.glob(dir_name + '/*.pdb')
-        self.chain2path = {pdb_fn.split('/')[-1].split('.')[0] for pdb_fn in pdb_fn_list}
+        self.chain2path = {pdb_fn.split('/')[-1].split('.')[0]: pdb_fn for pdb_fn in pdb_fn_list}
         self.test_prot_list = list(self.chain2path.keys())
         self.Y_hat = np.zeros((len(self.test_prot_list), len(self.goterms)), dtype=float)
         self.goidx2chains = {}

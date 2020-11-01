@@ -6,6 +6,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-s', '--seq', type=str,  help="Protein sequence to be annotated.")
     parser.add_argument('-cm', '--cmap', type=str,  help="Protein contact map to be annotated (in *npz file format).")
+    parser.add_argument('-pdb', '--pdb_fn', type=str,  help="Protein PDB file to be annotated.")
     parser.add_argument('--cmap_csv', type=str,  help="Catalogue with chain to file path mapping.")
     parser.add_argument('--pdb_dir', type=str,  help="Directory with PDB files of predicted Rosetta/DMPFold structures.")
     parser.add_argument('--fasta_fn', type=str,  help="Fasta file with protein sequences.")
@@ -26,7 +27,7 @@ if __name__ == "__main__":
                   "cc": "./trained_models/DeepCNN-MERGED_cellular_component"
                   }
 
-    elif args.cmap is not None or args.cmap_csv is not None or args.pdb_dir is not None:
+    elif args.cmap is not None or args.pdb_fn is not None or args.cmap_csv is not None or args.pdb_dir is not None:
         gcn = True
         layer_name = "GCNN_concatenate"
         models = {"mf": "./trained_models/DeepFRI-MERGED_MultiGraphConv_3x512_fcd_1024_ca_10A_molecular_function",
@@ -41,6 +42,8 @@ if __name__ == "__main__":
             predictor.predict(args.seq)
         if args.cmap is not None:
             predictor.predict(args.cmap)
+        if args.pdb_fn is not None:
+            predictor.predict(args.pdb_fn)
         if args.fasta_fn is not None:
             predictor.predict_from_fasta(args.fasta_fn)
         if args.cmap_csv is not None:
