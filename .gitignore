@@ -11,3 +11,4 @@ deepfrier/.ropeproject
 pred_cmaps_benchmark
 tasks.txt
 rosetta_aupr_perf.py
+random5k
