@@ -17,7 +17,7 @@ printf "\n\n  DOWNLOADING PDB SEQRES SEQUENCES...\n"
 wget ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt.gz -O $DATA_DIR/pdb_seqres.txt.gz
 
 printf "\n\n  DOWNLOADING PDB CLUSTERS...\n"
-wget ftp://resources.rcsb.org/sequence/clusters/bc-$SEQ_SIM.out -O $DATA_DIR/bc-$SEQ_SIM.out
+wget https://cdn.rcsb.org/resources/sequence/clusters/bc-$SEQ_SIM.out -O $DATA_DIR/bc-$SEQ_SIM.out
 
 printf "\n\n  DOWNLOADING GO HIERARCHY...\n"
 wget http://purl.obolibrary.org/obo/go/go-basic.obo -O $DATA_DIR/go-basic.obo

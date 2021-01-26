@@ -138,6 +138,14 @@ def write_output_files(fname, pdb2go, go2info, pdb2seq):
     onts = ['molecular_function', 'biological_process', 'cellular_component']
     selected_goterms = {ont: set() for ont in onts}
     selected_proteins = set()
+    for goterm in go2info:
+        prots = go2info[goterm]['pdb_chains']
+        num = len(prots)
+        namespace = go2info[goterm]['ont']
+        if num > 49 and num <= 5000:
+            selected_goterms[namespace].add(goterm)
+            selected_proteins = selected_proteins.union(prots)
+    """
     for chain in pdb2go:
         goterms = set(pdb2go[chain]['goterms'])
         if len(goterms) > 2 and chain in pdb2seq:
@@ -145,9 +153,10 @@ def write_output_files(fname, pdb2go, go2info, pdb2seq):
                 prots = go2info[goterm]['pdb_chains']
                 num = len(prots)
                 namespace = go2info[goterm]['ont']
-                if num > 49 and num < 5000:
+                if num > 19 and num <= 5000:
                     selected_goterms[namespace].add(goterm)
                     selected_proteins = selected_proteins.union(prots)
+    """
 
     selected_goterms_list = {ont: list(selected_goterms[ont]) for ont in onts}
     selected_gonames_list = {ont: [go2info[goterm]['goname'] for goterm in selected_goterms_list[ont]] for ont in onts}
