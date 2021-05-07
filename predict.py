@@ -25,15 +25,11 @@ if __name__ == "__main__":
 
     if args.seq is not None or args.fasta_fn is not None:
         params = params['cnn']
-        gcn = params['gcn']
-        layer_name = params['layer_name']
-        models = params['models']
-
     elif args.cmap is not None or args.pdb_fn is not None or args.cmap_csv is not None or args.pdb_dir is not None:
         params = params['gcn']
-        gcn = params['gcn']
-        layer_name = params['layer_name']
-        models = params['models']
+    gcn = params['gcn']
+    layer_name = params['layer_name']
+    models = params['models']
 
     for ont in args.ontology:
         predictor = Predictor(models[ont], gcn=gcn)

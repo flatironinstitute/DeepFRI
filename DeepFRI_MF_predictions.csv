@@ -1,0 +1,25 @@
+### Predictions made by DeepFRI.
+Protein,GO_term/EC_number,Score,GO_term/EC_number name
+query_prot,GO:0015288,0.16827,porin activity
+query_prot,GO:0022829,0.15898,wide pore channel activity
+query_prot,GO:0005215,0.14902,transporter activity
+query_prot,GO:0005198,0.14424,structural molecule activity
+query_prot,GO:0022857,0.13843,transmembrane transporter activity
+query_prot,GO:0140096,0.13336,"catalytic activity, acting on a protein"
+query_prot,GO:0003677,0.12102,DNA binding
+query_prot,GO:0097367,0.12076,carbohydrate derivative binding
+query_prot,GO:0016772,0.12035,"transferase activity, transferring phosphorus-containing groups"
+query_prot,GO:0015318,0.11014,inorganic molecular entity transmembrane transporter activity
+query_prot,GO:0022803,0.10920,passive transmembrane transporter activity
+query_prot,GO:0015267,0.10918,channel activity
+query_prot,GO:0015075,0.10867,ion transmembrane transporter activity
+query_prot,GO:0032553,0.10715,ribonucleotide binding
+query_prot,GO:0033218,0.10659,amide binding
+query_prot,GO:0022890,0.10627,inorganic cation transmembrane transporter activity
+query_prot,GO:0046983,0.10555,protein dimerization activity
+query_prot,GO:0008324,0.10533,cation transmembrane transporter activity
+query_prot,GO:0017076,0.10356,purine nucleotide binding
+query_prot,GO:0003723,0.10333,RNA binding
+query_prot,GO:0030246,0.10239,carbohydrate binding
+query_prot,GO:0032555,0.10229,purine ribonucleotide binding
+query_prot,GO:0008092,0.10159,cytoskeletal protein binding
