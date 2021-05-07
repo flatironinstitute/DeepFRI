@@ -1,3 +1,4 @@
+import os
 import csv
 import json
 import pickle
@@ -50,14 +51,11 @@ if __name__ == "__main__":
     pos_weights = np.maximum(1.0, np.minimum(10.0, pos_weights))
     pos_weights = np.concatenate([pos_weights.reshape((len(pos_weights), 1)), pos_weights.reshape((len(pos_weights), 1))], axis=-1)
 
-    print (pos_weights.shape)
-
     print ("### Training model: ", args.model_name, " on ", output_dim, " GO terms.")
     model = DeepCNN(num_filters=args.num_filters, filter_lens=args.filter_lens, n_channels=26, output_dim=output_dim,
                     lr=args.lr, drop=args.dropout, l2_reg=args.l2_reg, lm_model_name=args.lm_model_name, model_name_prefix=args.model_name)
 
     model.train(train_tfrecord_fn, valid_tfrecord_fn, epochs=args.epochs, batch_size=args.batch_size, pad_len=args.pad_len, ont=args.ontology)
-    # class_weight=pos_weights)
 
     # save models
     model.save_model()
@@ -79,17 +77,18 @@ if __name__ == "__main__":
         next(csv_reader, None)  # header
         for row in csv_reader:
             prot = row[0]
-            cmap = np.load(path + prot + '.npz')
-            sequence = str(cmap['seqres'])
-            S = seq2onehot(sequence)
+            if os.path.isfile(path + prot + '.npz'):
+                cmap = np.load(path + prot + '.npz')
+                sequence = str(cmap['seqres'])
+                S = seq2onehot(sequence)
 
-            # ##
-            S = S.reshape(1, *S.shape)
+                # ##
+                S = S.reshape(1, *S.shape)
 
-            # results
-            proteins.append(prot)
-            Y_pred.append(model.predict(S).reshape(1, output_dim))
-            Y_true.append(prot2annot[prot][args.ontology].reshape(1, output_dim))
+                # results
+                proteins.append(prot)
+                Y_pred.append(model.predict(S).reshape(1, output_dim))
+                Y_true.append(prot2annot[prot][args.ontology].reshape(1, output_dim))
 
     pickle.dump({'proteins': np.asarray(proteins),
                  'Y_pred': np.concatenate(Y_pred, axis=0),

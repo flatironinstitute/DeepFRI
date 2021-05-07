@@ -182,4 +182,5 @@ class DeepFRI(object):
         self.model = tf.keras.models.load_model(self.model_name_prefix + '.hdf5',
                                                 custom_objects={self.gc_layer: self.GConv,
                                                                 'FuncPredictor': FuncPredictor,
-                                                                'SumPooling': SumPooling})
+                                                                'SumPooling': SumPooling
+                                                                })
