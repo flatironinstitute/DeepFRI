@@ -192,5 +192,5 @@ Data (train and validation) used for training DeepFRI model are provided as Tens
 # Pretrained model
 
 Pretrained models can be downloaded from:
-[Models](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/trained_models.tar.gz) (use these models if you run DeepFRI on GPU)
-[Newest Models](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/newest_trained_models.tar.gz) (use these models if you run DeepFRI on CPU)
+* [Models](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/trained_models.tar.gz) (use these models if you run DeepFRI on GPU)
+* [Newest Models](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/newest_trained_models.tar.gz) (use these models if you run DeepFRI on CPU)
