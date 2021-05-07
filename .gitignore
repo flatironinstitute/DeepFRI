@@ -6,7 +6,7 @@ old_slurm
 new_pdb
 __pycache__
 .ropeproject
-trained_models
+trained_models/*
 deepfrier/.ropeproject
 pred_cmaps_benchmark
 tasks.txt
