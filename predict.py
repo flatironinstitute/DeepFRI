@@ -1,3 +1,4 @@
+import json
 import argparse
 from deepfrier.Predictor import Predictor
 
@@ -10,31 +11,29 @@ if __name__ == "__main__":
     parser.add_argument('--cmap_csv', type=str,  help="Catalogue with chain to file path mapping.")
     parser.add_argument('--pdb_dir', type=str,  help="Directory with PDB files of predicted Rosetta/DMPFold structures.")
     parser.add_argument('--fasta_fn', type=str,  help="Fasta file with protein sequences.")
-    parser.add_argument('--model_fn_prefix', type=str, default='GCN_molecular_function', help="Name of the GCN/CNN model.")
-    parser.add_argument('-ont', '--ontology', type=str, default=['mf'], nargs='+', choices=['mf', 'bp', 'cc', 'ec'], help="Gene Ontology/Enzyme Commission.")
+    parser.add_argument('--model_config', type=str, default='./trained_models/model_config.json', help="JSON file with model names.")
+    parser.add_argument('-ont', '--ontology', type=str, default=['mf'], nargs='+', required=True, choices=['mf', 'bp', 'cc', 'ec'],
+                        help="Gene Ontology/Enzyme Commission.")
     parser.add_argument('-o', '--output_fn_prefix', type=str, default='DeepFRI', help="Save predictions/saliency in file.")
     parser.add_argument('-v', '--verbose', help="Prints predictions.", action="store_true")
     parser.add_argument('--use_guided_grads', help="Prints predictions.", action="store_true")
     parser.add_argument('--saliency', help="Compute saliency maps for every protein and every MF-GO term/EC number.", action="store_true")
     args = parser.parse_args()
 
+    with open(args.model_config) as json_file:
+        params = json.load(json_file)
+
     if args.seq is not None or args.fasta_fn is not None:
-        gcn = False
-        layer_name = "CNN_concatenate"
-        models = {"ec": "./trained_models/DeepCNN-MERGED_enzyme_commission",
-                  "mf": "./trained_models/DeepCNN-MERGED_molecular_function",
-                  "bp": "./trained_models/DeepCNN-MERGED_biological_process",
-                  "cc": "./trained_models/DeepCNN-MERGED_cellular_component"
-                  }
+        params = params['cnn']
+        gcn = params['gcn']
+        layer_name = params['layer_name']
+        models = params['models']
 
     elif args.cmap is not None or args.pdb_fn is not None or args.cmap_csv is not None or args.pdb_dir is not None:
-        gcn = True
-        layer_name = "GCNN_concatenate"
-        models = {"mf": "./trained_models/DeepFRI-MERGED_MultiGraphConv_3x512_fcd_1024_ca_10A_molecular_function",
-                  "bp": "./trained_models/DeepFRI-MERGED_MultiGraphConv_3x512_fcd_2048_ca_10A_biological_process",
-                  "cc": "./trained_models/DeepFRI-MERGED_MultiGraphConv_3x512_fcd_1024_ca_10A_cellular_component",
-                  'ec': "./trained_models/DeepFRI-MERGED_MultiGraphConv_3x512_fcd_1024_ca_10A_enzyme_commission"
-                  }
+        params = params['gcn']
+        gcn = params['gcn']
+        layer_name = params['layer_name']
+        models = params['models']
 
     for ont in args.ontology:
         predictor = Predictor(models[ont], gcn=gcn)
