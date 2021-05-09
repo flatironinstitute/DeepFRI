@@ -244,4 +244,4 @@ Pretrained models can be downloaded from:
 * [Models](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/trained_models.tar.gz) (use these models if you run DeepFRI on GPU)
 * [Newest Models](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/newest_trained_models.tar.gz) (use these models if you run DeepFRI on CPU)
 
-Uncompress `tar.gz` file into the DeepFRI directory (`tar xvzf trained_models.tar.gz`).
+Uncompress `tar.gz` file into the DeepFRI directory (`tar xvzf trained_models.tar.gz -C /path/to/DeepFRI`).
