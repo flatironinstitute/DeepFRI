@@ -38,7 +38,7 @@ To predict protein functions use `predict.py` script with the following options:
 * `pdb_dir`         str, Directory with cleaned PDB files (see `examples/pdb_files/`)
 * `cmap_csv`        str, Filename of the catalogue (in `*.csv` file format) containg mapping between protein names and directory with `*.npz` files (see `examples/catalogue_pdb_chains.csv`)
 * `fasta_fn`        str, Fasta filename (see `examples/pdb_chains.fasta`)
-* `model_config`    str, JSON file with model filenames (see # Pretrained models)
+* `model_config`    str, JSON file with model filenames (see `trained_models/`)
 * `ont`             str, Ontology (`mf` - Molecular Function, `bp` - Biological Process, `cc` - Cellular Component, `ec` - Enzyme Commission)
 * `output_fn_prefix`   str, Output filename (sampe prefix for predictions/saliency will be used)
 * `verbose`         bool, Whether or not to print function prediction results
