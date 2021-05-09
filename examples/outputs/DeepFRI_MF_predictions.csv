@@ -1,0 +1,31 @@
+### Predictions made by DeepFRI.
+Protein,GO_term/EC_number,Score,GO_term/EC_number name
+2J9H-A,GO:0004364,0.84826,glutathione transferase activity
+2J9H-A,GO:0016765,0.82014,"transferase activity, transferring alkyl or aryl (other than methyl) groups"
+1S3P-A,GO:0005509,0.99824,calcium ion binding
+2W83-E,GO:0097367,0.97007,carbohydrate derivative binding
+2W83-E,GO:0019001,0.96822,guanyl nucleotide binding
+2W83-E,GO:0017076,0.96674,purine nucleotide binding
+2W83-E,GO:0001882,0.96467,nucleoside binding
+2W83-E,GO:0035639,0.96374,purine ribonucleoside triphosphate binding
+2W83-E,GO:0016818,0.96303,"hydrolase activity, acting on acid anhydrides, in phosphorus-containing anhydrides"
+2W83-E,GO:0032555,0.96222,purine ribonucleotide binding
+2W83-E,GO:0016817,0.96203,"hydrolase activity, acting on acid anhydrides"
+2W83-E,GO:0016462,0.96134,pyrophosphatase activity
+2W83-E,GO:0032550,0.96127,purine ribonucleoside binding
+2W83-E,GO:0032561,0.95910,guanyl ribonucleotide binding
+2W83-E,GO:0032549,0.95859,ribonucleoside binding
+2W83-E,GO:0032553,0.95857,ribonucleotide binding
+2W83-E,GO:0003924,0.95534,GTPase activity
+2W83-E,GO:0001883,0.95232,purine nucleoside binding
+2W83-E,GO:0005525,0.94603,GTP binding
+2W83-E,GO:0017111,0.94034,nucleoside-triphosphatase activity
+2W83-E,GO:0044877,0.64779,protein-containing complex binding
+2W83-E,GO:0001664,0.30859,G protein-coupled receptor binding
+2W83-E,GO:0005102,0.19476,signaling receptor binding
+2PE5-B,GO:0003677,0.89086,DNA binding
+2PE5-B,GO:0017111,0.12892,nucleoside-triphosphatase activity
+2PE5-B,GO:0004386,0.12847,helicase activity
+2PE5-B,GO:0032553,0.12091,ribonucleotide binding
+2PE5-B,GO:0097367,0.11961,carbohydrate derivative binding
+2PE5-B,GO:0016887,0.11331,ATPase activity
