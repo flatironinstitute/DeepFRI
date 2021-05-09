@@ -16,7 +16,7 @@ if __name__ == "__main__":
                         help="Gene Ontology/Enzyme Commission.")
     parser.add_argument('-o', '--output_fn_prefix', type=str, default='DeepFRI', help="Save predictions/saliency in file.")
     parser.add_argument('-v', '--verbose', help="Prints predictions.", action="store_true")
-    parser.add_argument('--use_guided_grads', help="Prints predictions.", action="store_true")
+    parser.add_argument('--use_guided_grads', help="Use guided grads to compute gradCAM.", action="store_true")
     parser.add_argument('--saliency', help="Compute saliency maps for every protein and every MF-GO term/EC number.", action="store_true")
     args = parser.parse_args()
 
@@ -45,10 +45,12 @@ if __name__ == "__main__":
             predictor.predict_from_catalogue(args.cmap_csv)
         if args.pdb_dir is not None:
             predictor.predict_from_PDB_dir(args.pdb_dir)
+
         # save predictions
         predictor.export_csv(args.output_fn_prefix + "_" + ont.upper() + "_predictions.csv", args.verbose)
-        predictor.save_predictions(args.output_fn_prefix + "_" + ont.upper() + "_pred_scores.pckl")
+        predictor.save_predictions(args.output_fn_prefix + "_" + ont.upper() + "_pred_scores.json")
 
+        # save saliency maps
         if args.saliency and ont in ['mf', 'ec']:
             predictor.compute_GradCAM(layer_name=layer_name, use_guided_grads=args.use_guided_grads)
-            predictor.save_GradCAM(args.output_fn_prefix + "_" + ont.upper() + "_saliency_maps.pckl")
+            predictor.save_GradCAM(args.output_fn_prefix + "_" + ont.upper() + "_saliency_maps.json")

@@ -1,7 +1,6 @@
 import csv
 import glob
 import json
-import pickle
 import numpy as np
 import tensorflow as tf
 
@@ -40,7 +39,7 @@ class GradCAM(object):
         cam = self._compute_cam(output, grad)
         heatmap = (cam - cam.min())/(cam.max() - cam.min())
 
-        return heatmap
+        return heatmap.reshape(-1)
 
 
 class Predictor(object):
@@ -186,8 +185,14 @@ class Predictor(object):
                 self.prot2goterms[chain].append((self.goterms[idx], self.gonames[idx], float(y[idx])))
 
     def save_predictions(self, output_fn):
-        print ("### Saving predictions to *.pckl file...")
-        pickle.dump({'pdb_chains': self.test_prot_list, 'Y_hat': self.Y_hat, 'goterms': self.goterms, 'gonames': self.gonames}, open(output_fn, 'wb'))
+        print ("### Saving predictions to *.json file...")
+        # pickle.dump({'pdb_chains': self.test_prot_list, 'Y_hat': self.Y_hat, 'goterms': self.goterms, 'gonames': self.gonames}, open(output_fn, 'wb'))
+        with open(output_fn, 'w') as fw:
+            out_data = {'pdb_chains': self.test_prot_list,
+                        'Y_hat': self.Y_hat.tolist(),
+                        'goterms': self.goterms.tolist(),
+                        'gonames': self.gonames.tolist()}
+            json.dump(out_data, fw, indent=1)
 
     def export_csv(self, output_fn, verbose):
         with open(output_fn, 'w') as csvFile:
@@ -222,8 +227,10 @@ class Predictor(object):
                 self.pdb2cam[chain]['GO_ids'].append(self.goterms[go_indx])
                 self.pdb2cam[chain]['GO_names'].append(self.gonames[go_indx])
                 self.pdb2cam[chain]['sequence'] = self.data[chain][1]
-                self.pdb2cam[chain]['saliency_maps'].append(gradcam.heatmap(self.data[chain][0], go_indx, use_guided_grads=use_guided_grads))
+                self.pdb2cam[chain]['saliency_maps'].append(gradcam.heatmap(self.data[chain][0], go_indx, use_guided_grads=use_guided_grads).tolist())
 
     def save_GradCAM(self, output_fn):
-        print ("### Saving CAMs to *.pckl file...")
-        pickle.dump(self.pdb2cam, open(output_fn, 'wb'))
+        print ("### Saving CAMs to *.json file...")
+        # pickle.dump(self.pdb2cam, open(output_fn, 'wb'))
+        with open(output_fn, 'w') as fw:
+            json.dump(self.pdb2cam, fw, indent=1)

@@ -36,8 +36,6 @@ def load_FASTA(filename):
     for entry in SeqIO.parse(infile, 'fasta'):
         entries.append(str(entry.seq))
         proteins.append(str(entry.id))
-    if(len(entries) == 0):
-        return False
     return proteins, entries
 
 

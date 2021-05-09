@@ -75,7 +75,7 @@ class DeepFRI(object):
         x_aa = tf.keras.layers.Dense(lm_dim, use_bias=False, name='AA_embedding')(input_seq)
         if lm_model is not None:
             x_lm = tf.keras.layers.Dense(lm_dim, use_bias=True, name='LM_embedding')(lm_model(input_seq))
-            x_aa = tf.keras.layers.Add(name='Emedding')([x_lm, x_aa])
+            x_aa = tf.keras.layers.Add(name='Embedding')([x_lm, x_aa])
         x = tf.keras.layers.Activation('relu')(x_aa)
 
         # Graph Convolution layer
