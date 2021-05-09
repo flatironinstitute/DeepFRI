@@ -201,7 +201,7 @@ or to launch jobs run the following script:
 Generated files:
 * `model_name_prefix_ont_model.hdf5`   trained model with architecture and weights saved in HDF5 format
 * `model_name_prefix_ont_pred_scores.pckl` pickle file with predicted GO term/EC number scores for test proteins
-* `model_name_prefix_ont_model_params.json` pickle file with metadata (GO terms/names, architecture params, etc.)
+* `model_name_prefix_ont_model_params.json` JSON file with metadata (GO terms/names, architecture params, etc.)
 
 See examples of pre-trained models (`*.hdf5`) and model params (`*.json`) in: `trained_models/`.
 
