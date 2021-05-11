@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from create_nrPDB_GO_annot import read_fasta
+from create_nrPDB_GO_annot import read_fasta, load_clusters
 from biotoolbox.structure_file_reader import build_structure_container_for_pdb
 from biotoolbox.contact_map_builder import DistanceMapBuilder
 from Bio.PDB import PDBList
@@ -81,8 +81,8 @@ def load_EC_annot(filename):
 
 def retrieve_pdb(pdb, chain, chain_seqres, pdir):
     pdb_list = PDBList()
-    pdb_list.retrieve_pdb_file(pdb, pdir=pdir)
-    ca, cb = make_distance_maps(pdir + '/' + pdb+'.cif', chain=chain, sequence=chain_seqres)
+    pdb_list.retrieve_pdb_file(pdb, pdir=pdir, file_format='pdb')
+    ca, cb = make_distance_maps(pdir + '/' + pdb +'.pdb', chain=chain, sequence=chain_seqres)
 
     return ca[chain]['contact-map'], cb[chain]['contact-map']
 
@@ -118,33 +118,35 @@ def write_annot_npz(prot):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('-annot', type=str, default='./data/nrPDB-GO_2019.06.18_annot.tsv', help="Input file (*.tsv) with preprocessed annotations.")
+    parser.add_argument('-annot', type=str, help="Input file (*.tsv) with preprocessed annotations.")
     parser.add_argument('-ec', help="Use EC annotations.", action="store_true")
     parser.add_argument('-seqres', type=str, default='./data/pdb_seqres.txt.gz', help="PDB chain seqres fasta.")
     parser.add_argument('-num_threads', type=int, default=20, help="Number of threads (CPUs) to use in the computation.")
-    parser.add_argument('-bc', type=str, default='./data/bc-95.out', help="Clusters of PDB chains computd by Blastclust.")
+    parser.add_argument('-bc', type=str, help="Clusters of PDB chains computd by Blastclust.")
     parser.add_argument('-out_dir', type=str, default='./data/annot_pdb_chains_npz/', help="Output directory with distance maps saved in *.npz format.")
     args = parser.parse_args()
 
     # load annotations
-    """
-    if args.ec:
-        prot2goterms, _ = load_EC_annot(args.annot)
-    else:
-        prot2goterms, _, _ = load_GO_annot(args.annot)
-    print ("### number of annotated proteins: %d" % (len(prot2goterms)))
-    """
+    prot2goterms = {}
+    if args.annot is not None:
+        if args.ec:
+            prot2goterms, _ = load_EC_annot(args.annot)
+        else:
+            prot2goterms, _, _ = load_GO_annot(args.annot)
+        print ("### number of annotated proteins: %d" % (len(prot2goterms)))
 
     # load sequences
     prot2seq = read_fasta(args.seqres)
     print ("### number of proteins with seqres sequences: %d" % (len(prot2seq)))
 
-    """
     # load clusters
-    pdb2clust = load_clusters(args.bc)
-    clusters = set([pdb2clust[prot][0] for prot in prot2goterms])
-    print ("### number of annotated clusters: %d" % (len(clusters)))
+    pdb2clust = {}
+    if args.bc is not None:
+        pdb2clust = load_clusters(args.bc)
+        clusters = set([pdb2clust[prot][0] for prot in prot2goterms])
+        print ("### number of annotated clusters: %d" % (len(clusters)))
 
+    """
     # extracting unannotated proteins
     unannot_prots = set()
     for prot in pdb2clust:
@@ -153,18 +155,13 @@ if __name__ == '__main__':
     print ("### number of unannot proteins: %d" % (len(unannot_prots)))
     """
 
-    """
-    import glob
-    npz_pdb_chains = glob.glob(args.out_dir + '*.npz')
-    npz_pdb_chains = [chain.split('/')[-1].split('.')[0] for chain in npz_pdb_chains]
-
-    to_be_processed = list(prot2goterms.keys())
-    to_be_processed = list(set(to_be_processed).difference(npz_pdb_chains))
+    to_be_processed = set(prot2seq.keys())
+    if len(prot2goterms) != 0:
+        to_be_processed = to_be_processed.intersection(set(prot2goterms.keys()))
+    if len(prot2goterms) != 0:
+        to_be_processed = to_be_processed.intersection(set(pdb2clust.keys()))
     print ("Number of pdbs to be processed=", len(to_be_processed))
     print (to_be_processed)
-    """
-
-    to_be_processed = load_list("/mnt/home/vgligorijevic/Projects/NewMethods/Contact_maps/DeepFRIer2/CAM/Active_sites/ResBoost_PDB.txt")
 
     # process on multiple cpus
     nprocs = args.num_threads

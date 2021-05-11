@@ -26,15 +26,20 @@ root_terms = set(['GO:0008150', 'GO:0003674', 'GO:0005575'])
 def read_fasta(fn_fasta):
     aa = set(['R', 'X', 'S', 'G', 'W', 'I', 'Q', 'A', 'T', 'V', 'K', 'Y', 'C', 'N', 'L', 'F', 'D', 'M', 'P', 'H', 'E'])
     prot2seq = {}
-    with gzip.open(fn_fasta, "rt") as handle:
-        for record in SeqIO.parse(handle, "fasta"):
-            seq = str(record.seq)
-            prot = record.id
-            pdb, chain = prot.split('_')
-            prot = pdb.upper() + '-' + chain
-            if len(seq) >= 60 and len(seq) <= 1000:
-                if len((set(seq).difference(aa))) == 0:
-                    prot2seq[prot] = seq
+    if fn_fasta.endswith('gz'):
+        handle = gzip.open(fn_fasta, "rt")
+    else:
+        handle = open(fn_fasta, "rt")
+
+    for record in SeqIO.parse(handle, "fasta"):
+        seq = str(record.seq)
+        prot = record.id
+        pdb, chain = prot.split('_') if '_' in prot else prot.split('-')
+        prot = pdb.upper() + '-' + chain
+        if len(seq) >= 60 and len(seq) <= 1000:
+            if len((set(seq).difference(aa))) == 0:
+                prot2seq[prot] = seq
+
     return prot2seq
 
 
