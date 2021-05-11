@@ -5,9 +5,11 @@ from biotoolbox.structure_file_reader import build_structure_container_for_pdb
 from biotoolbox.contact_map_builder import DistanceMapBuilder
 from Bio.PDB import PDBList
 
+from functools import partial
 import numpy as np
 import argparse
 import csv
+import os
 
 
 def make_distance_maps(pdbfile, chain=None, sequence=None):
@@ -81,8 +83,8 @@ def load_EC_annot(filename):
 
 def retrieve_pdb(pdb, chain, chain_seqres, pdir):
     pdb_list = PDBList()
-    pdb_list.retrieve_pdb_file(pdb, pdir=pdir, file_format='pdb')
-    ca, cb = make_distance_maps(pdir + '/' + pdb +'.pdb', chain=chain, sequence=chain_seqres)
+    pdb_list.retrieve_pdb_file(pdb, pdir=pdir)
+    ca, cb = make_distance_maps(pdir + '/' + pdb +'.cif', chain=chain, sequence=chain_seqres)
 
     return ca[chain]['contact-map'], cb[chain]['contact-map']
 
@@ -100,15 +102,15 @@ def load_list(fname):
     return pdb_chain_list
 
 
-def write_annot_npz(prot):
+def write_annot_npz(prot, prot2seq=None, out_dir=None):
     """
     Write to *.npz file format.
     """
     pdb, chain = prot.split('-')
     print ('pdb=', pdb, 'chain=', chain)
     try:
-        A_ca, A_cb = retrieve_pdb(pdb.lower(), chain, prot2seq[prot], pdir=out_dir + '/' + 'tmp_PDB_files_dir/')
-        np.savez_compressed(out_dir + '/' + prot,
+        A_ca, A_cb = retrieve_pdb(pdb.lower(), chain, prot2seq[prot], pdir=os.path.join(out_dir, 'tmp_PDB_files_dir'))
+        np.savez_compressed(os.path.join(out_dir, prot),
                             C_alpha=A_ca,
                             C_beta=A_cb,
                             seqres=prot2seq[prot],
@@ -170,7 +172,8 @@ if __name__ == '__main__':
     nprocs = np.minimum(nprocs, multiprocessing.cpu_count())
     if nprocs > 4:
         pool = multiprocessing.Pool(processes=nprocs)
-        pool.map(write_annot_npz, to_be_processed)
+        pool.map(partial(write_annot_npz, prot2seq=prot2seq, out_dir=out_dir),
+                 to_be_processed)
     else:
         for prot in to_be_processed:
-            write_annot_npz(prot)
+            write_annot_npz(prot, prot2seq=prot2seq, out_dir=out_dir)
