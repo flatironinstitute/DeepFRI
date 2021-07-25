@@ -1,6 +1,11 @@
+import os
 import csv
 import glob
 import json
+import gzip
+import shutil
+import secrets
+
 import numpy as np
 import tensorflow as tf
 
@@ -76,6 +81,12 @@ class Predictor(object):
             D = cmap['C_alpha']
             A = np.double(D < cmap_thresh)
             seq = str(cmap['seqres'])
+        elif filename.endswith('.pdb.gz'):
+            with gzip.open(filename, 'rb') as f, open('temp.pdb', 'w') as out:
+                out.write(f.read().decode())
+            D, seq = load_predicted_PDB('temp.pdb')
+            A = np.double(D < cmap_thresh)
+            os.remove('temp.pdb')
         else:
             raise ValueError("File must be given in *.npz or *.pdb format.")
         # ##
@@ -121,7 +132,7 @@ class Predictor(object):
 
     def predict_from_PDB_dir(self, dir_name, cmap_thresh=10.0):
         print ("### Computing predictions from directory with PDB files...")
-        pdb_fn_list = glob.glob(dir_name + '/*.pdb')
+        pdb_fn_list = glob.glob(dir_name + '/*.pdb*')
         self.chain2path = {pdb_fn.split('/')[-1].split('.')[0]: pdb_fn for pdb_fn in pdb_fn_list}
         self.test_prot_list = list(self.chain2path.keys())
         self.Y_hat = np.zeros((len(self.test_prot_list), len(self.goterms)), dtype=float)
