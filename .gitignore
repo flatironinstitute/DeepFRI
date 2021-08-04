@@ -1,14 +1,21 @@
-results
-sifts_models
-ncov2019
 catalogues
-old_slurm
-new_pdb
 __pycache__
 .ropeproject
-trained_models/*
 deepfrier/.ropeproject
+
+# projects
 pred_cmaps_benchmark
 tasks.txt
 rosetta_aupr_perf.py
 random5k
+new_pdb
+old_slurm
+ncov2019
+sifts_models
+results
+
+
+# models
+trained_models/*
+newest_trained/*
+alphafold2
