@@ -3,7 +3,6 @@ import csv
 import glob
 import json
 import gzip
-import shutil
 import secrets
 
 import numpy as np
@@ -82,11 +81,12 @@ class Predictor(object):
             A = np.double(D < cmap_thresh)
             seq = str(cmap['seqres'])
         elif filename.endswith('.pdb.gz'):
-            with gzip.open(filename, 'rb') as f, open('temp.pdb', 'w') as out:
+            rnd_fn = "".join([secrets.token_hex(10), '.pdb'])
+            with gzip.open(filename, 'rb') as f, open(rnd_fn, 'w') as out:
                 out.write(f.read().decode())
-            D, seq = load_predicted_PDB('temp.pdb')
+            D, seq = load_predicted_PDB(rnd_fn)
             A = np.double(D < cmap_thresh)
-            os.remove('temp.pdb')
+            os.remove(rnd_fn)
         else:
             raise ValueError("File must be given in *.npz or *.pdb format.")
         # ##
