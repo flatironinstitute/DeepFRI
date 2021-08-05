@@ -141,6 +141,7 @@ def seq2onehot(seq):
 def _parse_function_gcn(serialized, n_goterms, channels=26, cmap_type='ca', cmap_thresh=10.0, ont='mf'):
     features = {
         cmap_type + '_dist_matrix': tf.io.VarLenFeature(dtype=tf.float32),
+        'gdv_matrix': tf.io.VarLenFeature(dtype=tf.float32),
         "seq_1hot": tf.io.VarLenFeature(dtype=tf.float32),
         ont + "_labels": tf.io.FixedLenFeature([n_goterms], dtype=tf.int64),
         "L": tf.io.FixedLenFeature([1], dtype=tf.int64)
@@ -161,11 +162,20 @@ def _parse_function_gcn(serialized, n_goterms, channels=26, cmap_type='ca', cmap
     # threshold distances
     A_cmap = tf.cast(tf.less_equal(A, cmap_thresh), tf.float32)
 
+    # sequence 1-hot
     S_shape = tf.stack([L, channels])
     S = parsed_example['seq_1hot']
     S = tf.cast(S, tf.float32)
     S = tf.sparse.to_dense(S)
     S = tf.reshape(S, S_shape)
+
+    #
+    GDV_shape = tf.stack([L, 73])
+    GDV = parsed_example['gdv_matrix']
+    GDV = tf.cast(GDV, tf.float32)
+    GDV = tf.sparse.to_dense(GDV)
+    GDV = tf.reshape(GDV, GDV_shape)
+
 
     labels = parsed_example[ont + '_labels']
     labels = tf.cast(labels, tf.float32)
@@ -253,6 +263,7 @@ if __name__ == "__main__":
     # from DeepFRI import DeepFRI
     # model = DeepFRI(output_dim=489)
 
-    filenames = '/mnt/ceph/users/vgligorijevic/ContactMaps/TFRecords/PDB_GO_valid*'
+    # filenames = '/mnt/ceph/users/vgligorijevic/ContactMaps/DeepFRI2.0_TFRecords/PDB_GO_valid*'
+    filenames = '/mnt/ceph/users/vgligorijevic/ContactMaps/DeepFRI2.0_data/tmp/PDB-GO_valid*'
     n_records = sum(1 for f in glob.glob(filenames) for _ in tf.data.TFRecordDataset(f))
     print ("### Total number of samples=", n_records)

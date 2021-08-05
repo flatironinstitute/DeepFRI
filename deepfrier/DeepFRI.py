@@ -45,6 +45,9 @@ class DeepFRI(object):
         if gc_layer == 'NoGraphConv':
             self.GConv = NoGraphConv
             self.gc_layer = gc_layer
+        elif gc_layer == 'NoSeqConv':
+            self.GConv = NoSeqConv
+            self.gc_layer = gc_layer
         elif gc_layer == 'GAT':
             self.GConv = GAT
             self.gc_layer = gc_layer

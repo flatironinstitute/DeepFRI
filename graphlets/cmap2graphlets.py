@@ -50,7 +50,11 @@ def compute_graphlet_degree_vectors(cmap_npz_file, out_dir, cmap_key='C_alpha', 
 
     # load graphlet degree vectors
     node_GDV = read_orca_output_file("".join([tmp, ".out"]))
-    np.savez_compressed(os.path.join(out_dir, pdb_id), node_GDV=node_GDV)
+    np.savez_compressed(os.path.join(out_dir, pdb_id),
+                        node_GDV=node_GDV,
+                        C_alpha=cmap['C_alpha'],
+                        C_beta=cmap['C_beta'],
+                        seqres=cmap['seqres'])
 
     # remove tmp file
     os.system('rm ' + tmp + '*')

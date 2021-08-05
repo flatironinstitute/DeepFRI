@@ -1,3 +1,4 @@
+import os
 import csv
 import json
 import pickle
@@ -85,21 +86,22 @@ if __name__ == "__main__":
         next(csv_reader, None)  # header
         for row in csv_reader:
             prot = row[0]
-            cmap = np.load(path + prot + '.npz')
-            sequence = str(cmap['seqres'])
-            Ca_dist = cmap['C_alpha']
+            if os.path.isfile(path + prot + '.npz'):
+                cmap = np.load(path + prot + '.npz')
+                sequence = str(cmap['seqres'])
+                Ca_dist = cmap['C_alpha']
 
-            A = np.double(Ca_dist < args.cmap_thresh)
-            S = seq2onehot(sequence)
+                A = np.double(Ca_dist < args.cmap_thresh)
+                S = seq2onehot(sequence)
 
-            # ##
-            S = S.reshape(1, *S.shape)
-            A = A.reshape(1, *A.shape)
+                # ##
+                S = S.reshape(1, *S.shape)
+                A = A.reshape(1, *A.shape)
 
-            # results
-            proteins.append(prot)
-            Y_pred.append(model.predict([A, S]).reshape(1, output_dim))
-            Y_true.append(prot2annot[prot][args.ontology].reshape(1, output_dim))
+                # results
+                proteins.append(prot)
+                Y_pred.append(model.predict([A, S]).reshape(1, output_dim))
+                Y_true.append(prot2annot[prot][args.ontology].reshape(1, output_dim))
 
     pickle.dump({'proteins': np.asarray(proteins),
                  'Y_pred': np.concatenate(Y_pred, axis=0),

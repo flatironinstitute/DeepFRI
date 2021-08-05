@@ -125,7 +125,7 @@ class GenerateTFRecord(object):
     def _int_feature(self, value):
         return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
-    def _serialize_example(self, prot_id, sequence, ca_dist_matrix, cb_dist_matrix):
+    def _serialize_example(self, prot_id, sequence, ca_dist_matrix, cb_dist_matrix, graphlets=None):
         labels = self._dtype_feature()
 
         d_feature = {}
@@ -143,6 +143,9 @@ class GenerateTFRecord(object):
 
         d_feature['ca_dist_matrix'] = self._float_feature(ca_dist_matrix.reshape(-1))
         d_feature['cb_dist_matrix'] = self._float_feature(cb_dist_matrix.reshape(-1))
+
+        if graphlets is not None:
+            d_feature['gdv_matrix'] = self._float_feature(graphlets.reshape(-1))
 
         example = tf.train.Example(features=tf.train.Features(feature=d_feature))
         return example.SerializeToString()
@@ -164,8 +167,12 @@ class GenerateTFRecord(object):
                 sequence = str(cmap['seqres'])
                 ca_dist_matrix = cmap['C_alpha']
                 cb_dist_matrix = cmap['C_beta']
+                if 'node_GDV' in cmap:
+                    graphlets = cmap['node_GDV']
+                else:
+                    graphlets = None
 
-                example = self._serialize_example(prot, sequence, ca_dist_matrix, cb_dist_matrix)
+                example = self._serialize_example(prot, sequence, ca_dist_matrix, cb_dist_matrix, graphlets=graphlets)
                 writer.write(example)
             else:
                 print (pdb_file)
