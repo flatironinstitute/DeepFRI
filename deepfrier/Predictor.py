@@ -55,6 +55,7 @@ class Predictor(object):
         self.gcn = gcn
         self._load_model()
         self.prot2goterms = {}
+        self.goidx2chains = {}
 
     def _load_model(self):
         self.model = tf.keras.models.load_model(self.model_prefix + '.hdf5',
@@ -133,7 +134,6 @@ class Predictor(object):
 
     def predict_with_cmap(self, seqres, cmap, chain):
         self.Y_hat = np.zeros((1, len(self.goterms)), dtype=float)
-        self.goidx2chains = {}
         self.data = {}
         self.test_prot_list = [chain]
         if self.gcn:
@@ -154,8 +154,6 @@ class Predictor(object):
     def predict_from_sequence(self, sequence, chain):
         self.test_prot_list = [chain]
         self.Y_hat = np.zeros((len(self.test_prot_list), len(self.goterms)), dtype=float)
-        self.goidx2chains = {}
-        self.prot2goterms = {}
         self.data = {}
 
         for i, chain in enumerate(self.test_prot_list):
