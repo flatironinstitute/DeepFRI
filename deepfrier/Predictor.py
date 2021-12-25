@@ -151,6 +151,26 @@ class Predictor(object):
                 self.goidx2chains[idx].add(chain)
                 self.prot2goterms[chain].append((self.goterms[idx], self.gonames[idx], float(y[idx])))
 
+    def predict_from_sequence(self, sequence, chain):
+        self.test_prot_list = [chain]
+        self.Y_hat = np.zeros((len(self.test_prot_list), len(self.goterms)), dtype=float)
+        self.goidx2chains = {}
+        self.prot2goterms = {}
+        self.data = {}
+
+        for i, chain in enumerate(self.test_prot_list):
+            S = seq2onehot(str(sequence))
+            S = S.reshape(1, *S.shape)
+            y = self.model(S, training=False).numpy()[:, :, 0].reshape(-1)
+            self.Y_hat[i] = y
+            self.prot2goterms[chain] = []
+            self.data[chain] = [[S], sequence]
+            go_idx = np.where((y >= self.thresh) == True)[0]
+            for idx in go_idx:
+                if idx not in self.goidx2chains:
+                    self.goidx2chains[idx] = set()
+                self.goidx2chains[idx].add(chain)
+                self.prot2goterms[chain].append((self.goterms[idx], self.gonames[idx], float(y[idx])))
 
     def predict_from_PDB_dir(self, dir_name, cmap_thresh=10.0):
         print ("### Computing predictions from directory with PDB files...")
