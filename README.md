@@ -235,13 +235,13 @@ Data (train and validation) used for training DeepFRI model are provided as Tens
 
 | PDB | SWISS-MODEL |
 | --- | --- |
-| [Gene Ontology](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/PDB-GO.tar.gz)(19GB) | [Gene Ontology](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/SWISS-MODEL-GO.tar.gz)(165GB) |
-| [Enzyme Commission](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/PDB-EC.tar.gz)(13GB) | [Enzyme Commission](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/SWISS-MODEL-EC.tar.gz)(117GB) |
+| [Gene Ontology](https://users.flatironinstitute.org/~renfrew/DeepFRI_data/PDB-GO.tar.gz)(19GB) | [Gene Ontology](https://users.flatironinstitute.org/~renfrew/DeepFRI_data/SWISS-MODEL-GO.tar.gz)(165GB) |
+| [Enzyme Commission](https://users.flatironinstitute.org/~renfrew/DeepFRI_data/PDB-EC.tar.gz)(13GB) | [Enzyme Commission](https://users.flatironinstitute.org/~renfrew/DeepFRI_data/SWISS-MODEL-EC.tar.gz)(117GB) |
 
 # Pretrained models
 
 Pretrained models can be downloaded from:
-* [Models](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/trained_models.tar.gz) (use these models if you run DeepFRI on GPU)
-* [Newest Models](https://users.flatironinstitute.org/vgligorijevic/public_www/DeepFRI_data/newest_trained_models.tar.gz) (use these models if you run DeepFRI on CPU)
+* [Models](https://users.flatironinstitute.org/~renfrew/DeepFRI_data/trained_models.tar.gz) (use these models if you run DeepFRI on GPU)
+* [Newest Models](https://users.flatironinstitute.org/~renfrew/DeepFRI_data/newest_trained_models.tar.gz) (use these models if you run DeepFRI on CPU)
 
 Uncompress `tar.gz` file into the DeepFRI directory (`tar xvzf trained_models.tar.gz -C /path/to/DeepFRI`).
